@@ -3,7 +3,7 @@
   <b>Full featured tool for Roblox development</b>
 </div>
 
-# vasc
+# VASC
 
 vasc is a powerful CLI that improves Roblox development experience. This is core part of vasc project as this is where all the processing happens. [vasc VS Code](https://github.com/vadymcap/vasc-vscode) extension is user-friendly wrapper of this CLI and [vasc Roblox](https://github.com/vadymcap/vasc-roblox) is a Roblox Studio plugin that is required for live syncing.
 
