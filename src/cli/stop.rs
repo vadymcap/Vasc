@@ -3,9 +3,9 @@ use clap::Parser;
 use colored::Colorize;
 use reqwest::blocking::Client;
 
-use crate::{argon_info, argon_warn, logger::Table, sessions, util};
+use crate::{vasc_info, vasc_warn, logger::Table, sessions, util};
 
-/// Stop Argon session by address, ID or all running sessions
+/// Stop vasc session by address, ID or all running sessions
 #[derive(Parser)]
 pub struct Stop {
 	/// Session identifier
@@ -35,7 +35,7 @@ impl Stop {
 			let sessions = sessions::get_all()?;
 
 			if sessions.is_empty() {
-				argon_warn!("There are no running sessions");
+				vasc_warn!("There are no running sessions");
 				return Ok(());
 			}
 
@@ -51,7 +51,7 @@ impl Stop {
 				]);
 			}
 
-			argon_info!("All running sessions:\n\n{}", table);
+			vasc_info!("All running sessions:\n\n{}", table);
 
 			return Ok(());
 		}
@@ -60,7 +60,7 @@ impl Stop {
 			let sessions = sessions::get_all()?;
 
 			if sessions.is_empty() {
-				argon_warn!("There are no running sessions");
+				vasc_warn!("There are no running sessions");
 				return Ok(());
 			}
 
@@ -85,13 +85,13 @@ impl Stop {
 
 				sessions::remove(&session)?;
 			} else {
-				argon_warn!("There is no matching session to stop");
+				vasc_warn!("There is no matching session to stop");
 			}
 		} else {
 			let sessions = sessions::get_multiple(&self.session)?;
 
 			if sessions.is_empty() {
-				argon_warn!("There are no running sessions with provided IDs");
+				vasc_warn!("There are no running sessions with provided IDs");
 			} else {
 				for session in sessions.values() {
 					if let Some(address) = session.get_address() {
@@ -112,7 +112,7 @@ impl Stop {
 		let url = format!("{address}/stop");
 
 		match Client::new().post(url).send() {
-			Ok(_) => argon_info!("Stopped Argon session with address: {}", address.bold()),
+			Ok(_) => vasc_info!("Stopped vasc session with address: {}", address.bold()),
 			Err(_) => {
 				Self::kill_process(pid);
 			}
@@ -121,6 +121,6 @@ impl Stop {
 
 	fn kill_process(pid: u32) {
 		util::kill_process(pid);
-		argon_info!("Stopped Argon process with PID: {}", pid.to_string().bold())
+		vasc_info!("Stopped vasc process with PID: {}", pid.to_string().bold())
 	}
 }

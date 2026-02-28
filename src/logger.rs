@@ -9,27 +9,27 @@ use std::{fmt, io::Write};
 
 use crate::util;
 
-// These Argon logs ignore verbosity level, aside of `Off`
+// These vasc logs ignore verbosity level, aside of `Off`
 #[macro_export]
-macro_rules! argon_error {
-    ($($arg:tt)+) => (log::log!(target: "argon_log", log::Level::Error, $($arg)+))
+macro_rules! vasc_error {
+    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Error, $($arg)+))
 }
 
 #[macro_export]
-macro_rules! argon_warn {
-    ($($arg:tt)+) => (log::log!(target: "argon_log", log::Level::Warn, $($arg)+))
+macro_rules! vasc_warn {
+    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Warn, $($arg)+))
 }
 
 #[macro_export]
-macro_rules! argon_info {
-    ($($arg:tt)+) => (log::log!(target: "argon_log", log::Level::Info, $($arg)+))
+macro_rules! vasc_info {
+    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Info, $($arg)+))
 }
 
 pub fn init(verbosity: LevelFilter, log_style: WriteStyle) {
 	let mut builder = Builder::new();
 
 	builder.format(move |buffer, record| {
-		if record.level() > verbosity && record.target() != "argon_log" {
+		if record.level() > verbosity && record.target() != "vasc_log" {
 			return Ok(());
 		}
 
@@ -41,7 +41,7 @@ pub fn init(verbosity: LevelFilter, log_style: WriteStyle) {
 			Level::Trace => Color::White,
 		};
 
-		if record.target() == "argon_log" {
+		if record.target() == "vasc_log" {
 			writeln!(
 				buffer,
 				"{}: {:?}",

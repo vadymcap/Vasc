@@ -4,7 +4,7 @@ use reqwest::{blocking::Client, header::CONTENT_TYPE};
 use serde::Serialize;
 use std::{fs, path::MAIN_SEPARATOR};
 
-use crate::{argon_error, argon_info, sessions};
+use crate::{vasc_error, vasc_info, sessions};
 
 /// Execute Luau code in Roblox Studio (requires running session)
 #[derive(Parser)]
@@ -44,7 +44,7 @@ impl Exec {
 
 		if self.standalone {
 			// TODO: Implement standalone mode
-			argon_error!("Standalone mode is not implemented yet!");
+			vasc_error!("Standalone mode is not implemented yet!");
 		} else if let Some(session) = sessions::get(self.session, self.host, self.port)? {
 			let address = session.get_address().or_else(|| {
 				sessions::get_all()
@@ -72,8 +72,8 @@ impl Exec {
 					.send();
 
 				match response {
-					Ok(_) => argon_info!("Code executed successfully!"),
-					Err(err) => argon_error!("Code execution failed: {}", err),
+					Ok(_) => vasc_info!("Code executed successfully!"),
+					Err(err) => vasc_error!("Code execution failed: {}", err),
 				}
 
 				#[cfg(target_os = "windows")]
@@ -81,10 +81,10 @@ impl Exec {
 					crate::studio::focus(None)?;
 				}
 			} else {
-				argon_error!("Code execution failed: running session does not have an address");
+				vasc_error!("Code execution failed: running session does not have an address");
 			}
 		} else {
-			argon_error!("Code execution failed: no running session was found");
+			vasc_error!("Code execution failed: no running session was found");
 		}
 
 		Ok(())

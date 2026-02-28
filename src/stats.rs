@@ -26,7 +26,7 @@ macro_rules! stat_fn {
 }
 
 #[derive(Clone, Debug, Default, Serialize, Deserialize)]
-struct ArgonStats {
+struct vascStats {
 	minutes_used: u32,
 	files_synced: u32,
 	lines_synced: u32,
@@ -35,7 +35,7 @@ struct ArgonStats {
 	sessions_started: u32,
 }
 
-impl ArgonStats {
+impl vascStats {
 	fn total(&self) -> u32 {
 		self.minutes_used / 60
 			+ self.files_synced
@@ -45,7 +45,7 @@ impl ArgonStats {
 			+ self.sessions_started
 	}
 
-	fn extend(&mut self, other: &ArgonStats) {
+	fn extend(&mut self, other: &vascStats) {
 		self.minutes_used += other.minutes_used;
 		self.files_synced += other.files_synced;
 		self.lines_synced += other.lines_synced;
@@ -58,12 +58,12 @@ impl ArgonStats {
 #[derive(Debug, Serialize, Deserialize)]
 struct StatTracker {
 	last_synced: SystemTime,
-	stats: ArgonStats,
+	stats: vascStats,
 }
 
 impl StatTracker {
 	fn reset(&mut self) {
-		self.stats = ArgonStats::default();
+		self.stats = vascStats::default();
 	}
 
 	fn merge(&mut self, other: Self) {
@@ -79,13 +79,13 @@ impl Default for StatTracker {
 	fn default() -> Self {
 		Self {
 			last_synced: SystemTime::UNIX_EPOCH,
-			stats: ArgonStats::default(),
+			stats: vascStats::default(),
 		}
 	}
 }
 
 fn get_tracker() -> Result<StatTracker> {
-	let path = util::get_argon_dir()?.join("stats.toml");
+	let path = util::get_vasc_dir()?.join("stats.toml");
 
 	if path.exists() {
 		match toml::from_str(&fs::read_to_string(&path)?) {
@@ -102,7 +102,7 @@ fn get_tracker() -> Result<StatTracker> {
 }
 
 fn set_tracker(tracker: &StatTracker) -> Result<()> {
-	let path = util::get_argon_dir()?.join("stats.toml");
+	let path = util::get_vasc_dir()?.join("stats.toml");
 
 	fs::write(path, toml::to_string(tracker)?)?;
 
@@ -113,7 +113,7 @@ pub fn track() -> Result<()> {
 	let mut tracker = get_tracker()?;
 
 	if tracker.last_synced.elapsed()?.as_secs() > 3600 && tracker.stats.total() > 10 {
-		if let Some(token) = option_env!("ARGON_TOKEN") {
+		if let Some(token) = option_env!("vasc_TOKEN") {
 			let stats = tracker.stats;
 			let remainder = stats.minutes_used % 60;
 
@@ -127,18 +127,18 @@ pub fn track() -> Result<()> {
 			});
 
 			Client::new()
-				.post(format!("https://api.argon.wiki/push?auth={token}"))
+				.post(format!("https://api.vasc.wiki/push?auth={token}"))
 				.json(&stats)
 				.send()?;
 
 			tracker.last_synced = SystemTime::now();
-			tracker.stats = ArgonStats::default();
+			tracker.stats = vascStats::default();
 
 			tracker.stats.minutes_used = remainder;
 
 			set_tracker(&tracker)?;
 		} else {
-			warn!("This Argon build has no `ARGON_TOKEN` set, stats will not be uploaded")
+			warn!("This vasc build has no `vasc_TOKEN` set, stats will not be uploaded")
 		}
 	} else {
 		debug!("Stats already synced within the last hour or too few stats to sync");

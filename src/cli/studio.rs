@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
 
-use crate::{argon_info, config::Config, ext::PathExt, studio};
+use crate::{vasc_info, config::Config, ext::PathExt, studio};
 
 /// Launch a new Roblox Studio instance
 #[derive(Parser)]
@@ -19,11 +19,11 @@ pub struct Studio {
 impl Studio {
 	pub fn main(mut self) -> Result<()> {
 		if self.check && studio::is_running(None)? {
-			argon_info!("Roblox Studio is already running!");
+			vasc_info!("Roblox Studio is already running!");
 			return Ok(());
 		}
 
-		argon_info!("Launching Roblox Studio..");
+		vasc_info!("Launching Roblox Studio..");
 
 		if let Some(path) = self.path.as_ref() {
 			if Config::new().smart_paths && !path.exists() {

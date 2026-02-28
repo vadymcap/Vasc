@@ -1,5 +1,5 @@
 mod unresolved_value {
-	use argon::resolution::UnresolvedValue;
+	use vasc::resolution::UnresolvedValue;
 
 	use rbx_dom_weak::types::{
 		Attributes, Axes, BinaryString, BrickColor, CFrame, Color3, Color3uint8, ColorSequence, ColorSequenceKeypoint,
@@ -314,7 +314,7 @@ mod unresolved_value {
 
 	#[test]
 	fn string() {
-		assert_eq!(resolve("Instance", "Name", r#""Argon""#), "Argon".into());
+		assert_eq!(resolve("Instance", "Name", r#""vasc""#), "vasc".into());
 		assert_eq!(resolve_unambiguous(r#""Cool!""#), "Cool!".into());
 	}
 
@@ -381,7 +381,7 @@ mod unresolved_value {
 mod resolved_value {
 
 	use approx::assert_relative_eq;
-	use argon::resolution::UnresolvedValue;
+	use vasc::resolution::UnresolvedValue;
 
 	use rbx_dom_weak::types::{
 		Attributes, Axes, BinaryString, BrickColor, CFrame, Color3, Color3uint8, ColorSequence, ColorSequenceKeypoint,
@@ -702,7 +702,7 @@ mod resolved_value {
 
 	#[test]
 	fn string() {
-		assert_eq(from_variant("Argon"), json!("Argon"));
+		assert_eq(from_variant("vasc"), json!("vasc"));
 	}
 
 	#[test]

@@ -122,7 +122,7 @@ jobs:
       - name: Build
         run: cargo build --all-features --release --verbose --target ${{ matrix.target }}
         env:
-          ARGON_TOKEN: ${{ secrets.ARGON_TOKEN }}
+          vasc_TOKEN: ${{ secrets.vasc_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive
@@ -131,11 +131,11 @@ jobs:
           mkdir release
 
           if [ "${{ matrix.host }}" = "windows" ]; then
-            cp "target/${{ matrix.target }}/release/argon.exe" release/
+            cp "target/${{ matrix.target }}/release/vasc.exe" release/
             cd release
             7z a ../release.zip *
           else
-            cp "target/${{ matrix.target }}/release/argon" release/
+            cp "target/${{ matrix.target }}/release/vasc" release/
             cd release
             zip ../release.zip *
           fi
@@ -143,14 +143,14 @@ jobs:
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: argon-${{ github.ref_name }}-${{ matrix.label }}.zip
+          name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
           path: release.zip
 
       - name: Upload to Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: argon-${{ github.ref_name }}-${{ matrix.label }}.zip
+          asset_name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
           asset_path: release.zip
 
   publish-release:

@@ -11,7 +11,7 @@ use std::{
 };
 
 use crate::{
-	argon_error, argon_info,
+	vasc_error, vasc_info,
 	constants::TEMPLATES_VERSION,
 	installer::{get_plugin_version, install_templates},
 	logger,
@@ -28,7 +28,7 @@ pub struct UpdateStatus {
 }
 
 pub fn get_status() -> Result<UpdateStatus> {
-	let path = util::get_argon_dir()?.join("update.toml");
+	let path = util::get_vasc_dir()?.join("update.toml");
 
 	if path.exists() {
 		match toml::from_str(&fs::read_to_string(&path)?) {
@@ -49,7 +49,7 @@ pub fn get_status() -> Result<UpdateStatus> {
 }
 
 pub fn set_status(status: &UpdateStatus) -> Result<()> {
-	let path = util::get_argon_dir()?.join("update.toml");
+	let path = util::get_vasc_dir()?.join("update.toml");
 
 	fs::write(path, toml::to_string(status)?)?;
 
@@ -70,9 +70,9 @@ fn update_cli(prompt: bool, force: bool) -> Result<bool> {
 	};
 
 	let update = Update::configure()
-		.repo_owner("argon-rbx")
-		.repo_name("argon")
-		.bin_name("argon")
+		.repo_owner("vasc-rbx")
+		.repo_name("vasc")
+		.bin_name("vasc")
 		.target(target)
 		.show_download_progress(true)
 		.set_progress_style(style.0, style.1)
@@ -84,30 +84,30 @@ fn update_cli(prompt: bool, force: bool) -> Result<bool> {
 		if !prompt
 			|| logger::prompt(
 				&format!(
-					"New Argon version: {} is available! Would you like to update?",
+					"New vasc version: {} is available! Would you like to update?",
 					release.version.bold()
 				),
 				true,
 			) {
 			if !prompt {
-				argon_info!("New Argon version: {} is available! Updating..", release.version.bold());
+				vasc_info!("New vasc version: {} is available! Updating..", release.version.bold());
 			}
 
 			match update.update() {
 				Ok(_) => {
-					argon_info!(
+					vasc_info!(
 						"CLI updated! Restart the program to apply changes. Visit {} to read the changelog",
-						"https://argon.wiki/changelog/argon".bold()
+						"https://vasc.wiki/changelog/vasc".bold()
 					);
 					return Ok(true);
 				}
-				Err(err) => argon_error!("Failed to update Argon: {}", err),
+				Err(err) => vasc_error!("Failed to update vasc: {}", err),
 			}
 		} else {
-			trace!("Argon is out of date!");
+			trace!("vasc is out of date!");
 		}
 	} else {
-		trace!("Argon is up to date!");
+		trace!("vasc is up to date!");
 	}
 
 	Ok(false)
@@ -119,9 +119,9 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 	let plugin_path = get_plugin_path()?;
 
 	let update = Update::configure()
-		.repo_owner("argon-rbx")
-		.repo_name("argon-roblox")
-		.bin_name("Argon.rbxm")
+		.repo_owner("vasc-rbx")
+		.repo_name("vasc-roblox")
+		.bin_name("vasc.rbxm")
 		.target("")
 		.show_download_progress(true)
 		.set_progress_style(style.0, style.1)
@@ -134,36 +134,36 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 		if !prompt
 			|| logger::prompt(
 				&format!(
-					"New version of Argon plugin: {} is available! Would you like to update?",
+					"New version of vasc plugin: {} is available! Would you like to update?",
 					release.version.bold()
 				),
 				true,
 			) {
 			if !prompt {
-				argon_info!(
-					"New version of Argon plugin: {} is available! Updating..",
+				vasc_info!(
+					"New version of vasc plugin: {} is available! Updating..",
 					release.version.bold()
 				);
 			}
 
 			match update.download() {
 				Ok(_) => {
-					argon_info!(
+					vasc_info!(
 						"Roblox plugin updated! Make sure you have {} setting enabled to see changes. Visit {} to read the changelog",
 						"Reload plugins on file changed".bold(),
-						"https://argon.wiki/changelog/argon-roblox".bold()
+						"https://vasc.wiki/changelog/vasc-roblox".bold()
 					);
 
 					status.plugin_version = release.version;
 					return Ok(true);
 				}
-				Err(err) => argon_error!("Failed to update Argon plugin: {}", err),
+				Err(err) => vasc_error!("Failed to update vasc plugin: {}", err),
 			}
 		} else {
-			trace!("Argon plugin is out of date!");
+			trace!("vasc plugin is out of date!");
 		}
 	} else {
-		trace!("Argon plugin is up to date!");
+		trace!("vasc plugin is up to date!");
 	}
 
 	Ok(false)
@@ -173,7 +173,7 @@ fn update_templates(status: &mut UpdateStatus, prompt: bool, force: bool) -> Res
 	if status.templates_version < TEMPLATES_VERSION || force {
 		if !prompt || logger::prompt("Default templates have changed! Would you like to update?", true) {
 			if !prompt {
-				argon_info!("Default templates have changed! Updating..",);
+				vasc_info!("Default templates have changed! Updating..",);
 			}
 
 			install_templates(true)?;

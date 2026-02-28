@@ -15,7 +15,7 @@ use std::{
 };
 use toml;
 
-use crate::{argon_error, logger::Table, util};
+use crate::{vasc_error, logger::Table, util};
 
 lazy_static! {
 	static ref CONFIG: RwLock<Config> = RwLock::new(Config::default());
@@ -49,7 +49,7 @@ pub struct Config {
 	/// Use selene for codebase linting
 	pub use_selene: bool,
 
-	/// Run Argon asynchronously, freeing up the terminal
+	/// Run vasc asynchronously, freeing up the terminal
 	pub run_async: bool,
 	/// Scan for the first available port if selected one is in use
 	pub scan_ports: bool,
@@ -62,9 +62,9 @@ pub struct Config {
 	/// Build using XML format by default
 	pub build_xml: bool,
 
-	/// Check for new Argon releases on startup
+	/// Check for new vasc releases on startup
 	pub check_updates: bool,
-	/// Automatically install Argon updates if available
+	/// Automatically install vasc updates if available
 	pub auto_update: bool,
 	/// Install Roblox plugin locally and keep it updated
 	pub install_plugin: bool,
@@ -93,7 +93,7 @@ pub struct Config {
 	pub ignore_line_endings: bool,
 	/// Package manager to use when running roblox-ts scripts (npm, bun, etc.)
 	pub package_manager: String,
-	/// Share anonymous Argon usage statistics with the community
+	/// Share anonymous vasc usage statistics with the community
 	pub share_stats: bool,
 
 	#[serde(skip)]
@@ -166,8 +166,8 @@ impl Config {
 		let mut config = Self::default();
 
 		let config_kind = || -> Result<ConfigKind> {
-			let workspace_config = env::current_dir()?.join("argon.toml");
-			let global_config = util::get_argon_dir()?.join("config.toml");
+			let workspace_config = env::current_dir()?.join("vasc.toml");
+			let global_config = util::get_vasc_dir()?.join("config.toml");
 
 			let kind = if workspace_config.exists() {
 				ConfigKind::Workspace(workspace_config)
@@ -193,7 +193,7 @@ impl Config {
 
 	pub fn load_virtual(kind: ConfigKind) -> Result<()> {
 		let kind = match kind {
-			ConfigKind::Default => ConfigKind::Global(util::get_argon_dir()?.join("config.toml")),
+			ConfigKind::Default => ConfigKind::Global(util::get_vasc_dir()?.join("config.toml")),
 			_ => kind,
 		};
 
@@ -210,7 +210,7 @@ impl Config {
 	}
 
 	pub fn load_workspace(path: &Path) {
-		Self::load_specific(ConfigKind::Workspace(path.join("argon.toml")))
+		Self::load_specific(ConfigKind::Workspace(path.join("vasc.toml")))
 	}
 
 	#[inline]
@@ -246,7 +246,7 @@ impl Config {
 		match load_result {
 			Ok(()) => info!("{kind} config file loaded"),
 			Err(err) => {
-				argon_error!("Failed to load {} config file: {}", kind.to_string().bold(), err);
+				vasc_error!("Failed to load {} config file: {}", kind.to_string().bold(), err);
 			}
 		}
 	}

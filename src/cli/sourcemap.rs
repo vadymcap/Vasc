@@ -5,7 +5,7 @@ use log::info;
 use std::{path::PathBuf, process};
 
 use crate::{
-	argon_info,
+	vasc_info,
 	config::Config,
 	core::Core,
 	ext::PathExt,
@@ -37,13 +37,13 @@ pub struct Sourcemap {
 	#[arg(short, long)]
 	non_scripts: bool,
 
-	/// Run Argon asynchronously
+	/// Run vasc asynchronously
 	#[arg(short = 'A', long = "async")]
 	run_async: bool,
 
-	/// Spawn the Argon child process (internal)
+	/// Spawn the vasc child process (internal)
 	#[arg(long, hide = true)]
-	argon_spawn: bool,
+	vasc_spawn: bool,
 }
 
 impl Sourcemap {
@@ -53,7 +53,7 @@ impl Sourcemap {
 		Config::load_workspace(project_path.get_parent());
 		let config = Config::new();
 
-		if self.watch && !self.argon_spawn && (self.run_async || config.run_async) {
+		if self.watch && !self.vasc_spawn && (self.run_async || config.run_async) {
 			return self.spawn();
 		}
 
@@ -82,7 +82,7 @@ impl Sourcemap {
 		core.sourcemap(self.output.clone(), self.non_scripts)?;
 
 		if let Some(output) = &self.output {
-			argon_info!(
+			vasc_info!(
 				"Generated sourcemap of project: {} at: {}",
 				project_path.to_string().bold(),
 				output.resolve()?.to_string().bold()
@@ -93,7 +93,7 @@ impl Sourcemap {
 			sessions::add(self.session, None, None, process::id(), config.run_async)?;
 
 			if self.output.is_some() {
-				argon_info!("Watching for changes..");
+				vasc_info!("Watching for changes..");
 			}
 
 			let queue = core.queue();
@@ -134,7 +134,7 @@ impl Sourcemap {
 			args.push("--non-scripts".into())
 		}
 
-		Program::new(ProgramName::Argon).args(args).spawn()?;
+		Program::new(ProgramName::vasc).args(args).spawn()?;
 
 		Ok(())
 	}

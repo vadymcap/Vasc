@@ -2,9 +2,9 @@ use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use std::{fs, path::PathBuf};
 
-use crate::{argon_info, config::Config, ext::PathExt, installer, util};
+use crate::{vasc_info, config::Config, ext::PathExt, installer, util};
 
-/// Install Argon Roblox Studio plugin locally
+/// Install vasc Roblox Studio plugin locally
 #[derive(Parser)]
 pub struct Plugin {
 	/// Whether to `install` or `uninstall` the plugin
@@ -21,8 +21,8 @@ impl Plugin {
 			let smart_paths = Config::new().smart_paths;
 
 			if path.is_dir() || (smart_paths && (path.extension().is_none())) {
-				if !smart_paths || path.get_name().to_lowercase() != "argon" {
-					path.join("Argon.rbxm")
+				if !smart_paths || path.get_name().to_lowercase() != "vasc" {
+					path.join("vasc.rbxm")
 				} else {
 					path.with_extension("rbxm")
 				}
@@ -35,11 +35,11 @@ impl Plugin {
 
 		match self.mode.unwrap_or_default() {
 			PluginMode::Install => {
-				argon_info!("Installing Argon plugin..");
+				vasc_info!("Installing vasc plugin..");
 				installer::install_plugin(&plugin_path, true)?;
 			}
 			PluginMode::Uninstall => {
-				argon_info!("Uninstalling Argon plugin..");
+				vasc_info!("Uninstalling vasc plugin..");
 				fs::remove_file(plugin_path)?;
 			}
 		}

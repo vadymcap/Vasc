@@ -3,7 +3,7 @@ use self_update::backends::github::Update;
 use std::{env, fs::File, path::PathBuf};
 
 fn main() -> Result<()> {
-	let out_path = PathBuf::from(env::var("OUT_DIR")?).join("Argon.rbxm");
+	let out_path = PathBuf::from(env::var("OUT_DIR")?).join("vasc.rbxm");
 
 	if !cfg!(feature = "plugin") {
 		File::create(out_path)?;
@@ -19,16 +19,16 @@ fn main() -> Result<()> {
 	}
 
 	builder
-		.repo_owner("argon-rbx")
-		.repo_name("argon-roblox")
-		.bin_name("Argon.rbxm")
+		.repo_owner("vasc-rbx")
+		.repo_name("vasc-roblox")
+		.bin_name("vasc.rbxm")
 		.bin_install_path(out_path)
 		.target("");
 
 	builder
 		.build()?
 		.download()
-		.context("Failed to download Argon plugin from GitHub!")?;
+		.context("Failed to download vasc plugin from GitHub!")?;
 
 	Ok(())
 }

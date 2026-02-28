@@ -1,9 +1,9 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 
-use crate::{argon_error, argon_info, config::Config, updater};
+use crate::{vasc_error, vasc_info, config::Config, updater};
 
-/// Forcefully update Argon components if available
+/// Forcefully update vasc components if available
 #[derive(Parser)]
 pub struct Update {
 	/// Whether to update `cli`, `plugin`, `templates` or `all`
@@ -28,10 +28,10 @@ impl Update {
 		match updater::manual_update(cli, plugin, templates, self.force) {
 			Ok(updated) => {
 				if !updated {
-					argon_info!("Everything is up to date!");
+					vasc_info!("Everything is up to date!");
 				}
 			}
-			Err(err) => argon_error!("Failed to update Argon: {}", err),
+			Err(err) => vasc_error!("Failed to update vasc: {}", err),
 		}
 
 		Ok(())

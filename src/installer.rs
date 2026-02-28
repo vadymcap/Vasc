@@ -7,7 +7,7 @@ use self_update::{backends::github::Update, self_replace, update::UpdateStatus};
 use std::{env, fs, path::Path};
 
 use crate::{
-	argon_error, argon_info,
+	vasc_error, vasc_info,
 	ext::PathExt,
 	logger, updater,
 	util::{self, get_plugin_path},
@@ -20,7 +20,7 @@ const MODEL_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/m
 const QUICK_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/quick");
 const EMPTY_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/empty");
 
-const ARGON_PLUGIN: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/Argon.rbxm"));
+const vasc_PLUGIN: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vasc.rbxm"));
 
 pub fn is_managed() -> bool {
 	let path = match env::current_exe() {
@@ -28,12 +28,12 @@ pub fn is_managed() -> bool {
 		Err(_) => return false,
 	};
 
-	!path.contains(&[".argon", "bin"]) && (path.contains(&["bin"]) || path.contains(&["tool-storage"]))
+	!path.contains(&[".vasc", "bin"]) && (path.contains(&["bin"]) || path.contains(&["tool-storage"]))
 }
 
 pub fn verify(is_managed: bool, with_plugin: bool) -> Result<()> {
 	if !is_managed {
-		let bin_dir = util::get_argon_dir()?.join("bin");
+		let bin_dir = util::get_vasc_dir()?.join("bin");
 
 		if !bin_dir.exists() {
 			fs::create_dir_all(&bin_dir)?;
@@ -42,10 +42,10 @@ pub fn verify(is_managed: bool, with_plugin: bool) -> Result<()> {
 		globenv::set_path(&bin_dir.to_string())?;
 
 		#[cfg(not(target_os = "windows"))]
-		let exe_path = bin_dir.join("argon");
+		let exe_path = bin_dir.join("vasc");
 
 		#[cfg(target_os = "windows")]
-		let exe_path = bin_dir.join("argon.exe");
+		let exe_path = bin_dir.join("vasc.exe");
 
 		if !exe_path.exists() {
 			fs::copy(env::current_exe()?, &exe_path)?;
@@ -75,9 +75,9 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 	let style = util::get_progress_style();
 
 	let update = Update::configure()
-		.repo_owner("argon-rbx")
-		.repo_name("argon-roblox")
-		.bin_name("Argon.rbxm")
+		.repo_owner("vasc-rbx")
+		.repo_name("vasc-roblox")
+		.bin_name("vasc.rbxm")
 		.target("")
 		.show_download_progress(show_progress)
 		.set_progress_style(style.0, style.1)
@@ -87,7 +87,7 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 	match update.download() {
 		Ok(status) => match status {
 			UpdateStatus::Updated(release) => {
-				argon_info!("Installed Argon plugin, version: {}", release.version.bold());
+				vasc_info!("Installed vasc plugin, version: {}", release.version.bold());
 
 				if path.contains(&["Roblox", "Plugins"]) {
 					let mut status = updater::get_status()?;
@@ -99,17 +99,17 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 			_ => unreachable!(),
 		},
 		Err(err) => {
-			trace!("Failed to install Argon plugin from GitHub: {err}");
+			trace!("Failed to install vasc plugin from GitHub: {err}");
 
 			#[allow(clippy::const_is_empty)]
-			if ARGON_PLUGIN.is_empty() {
-				argon_error!("No internet connection! Failed to install Argon plugin - no bundled binary found");
+			if vasc_PLUGIN.is_empty() {
+				vasc_error!("No internet connection! Failed to install vasc plugin - no bundled binary found");
 				return Ok(());
 			}
 
-			fs::write(path, ARGON_PLUGIN)?;
+			fs::write(path, vasc_PLUGIN)?;
 
-			argon_info!("No internet connection! Installed Argon plugin from bundled binary")
+			vasc_info!("No internet connection! Installed vasc plugin from bundled binary")
 		}
 	}
 
@@ -117,7 +117,7 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 }
 
 pub fn install_templates(update: bool) -> Result<()> {
-	let templates_dir = util::get_argon_dir()?.join("templates");
+	let templates_dir = util::get_vasc_dir()?.join("templates");
 
 	let place_template = templates_dir.join("place");
 	let plugin_template = templates_dir.join("plugin");
@@ -177,7 +177,7 @@ fn install_template(template: &Dir, path: &Path) -> Result<()> {
 pub fn get_plugin_version() -> String {
 	// May seem hacky, but this function will only be
 	// called once for most users and is non-critical anyway
-	if let Ok(dom) = rbx_binary::from_reader(ARGON_PLUGIN) {
+	if let Ok(dom) = rbx_binary::from_reader(vasc_PLUGIN) {
 		for (_, instance) in dom.into_raw().1 {
 			if instance.name == "manifest" && instance.class == "ModuleScript" {
 				if let Some(Variant::String(source)) = instance.properties.get(&ustr("Source")) {

@@ -8,11 +8,11 @@ use std::{
 	process::{Child, Command, Output, Stdio},
 };
 
-use crate::{argon_error, config::Config, ext::WriteStyleExt, logger, util};
+use crate::{vasc_error, config::Config, ext::WriteStyleExt, logger, util};
 
 #[derive(PartialEq)]
 pub enum ProgramName {
-	Argon,
+	vasc,
 	Git,
 	Npm,
 	Npx,
@@ -95,8 +95,8 @@ impl Program {
 	}
 
 	fn get_command(&self) -> Command {
-		if self.program == ProgramName::Argon {
-			let mut command = Command::new(env::current_exe().unwrap_or(PathBuf::from("argon")));
+		if self.program == ProgramName::vasc {
+			let mut command = Command::new(env::current_exe().unwrap_or(PathBuf::from("vasc")));
 
 			let verbosity = util::env_verbosity().as_str();
 			let log_style = util::env_log_style().to_string();
@@ -105,7 +105,7 @@ impl Program {
 
 			command
 				.args(self.args.clone())
-				.arg("--argon-spawn")
+				.arg("--vasc-spawn")
 				.env("RUST_VERBOSE", verbosity)
 				.env("RUST_LOG_STYLE", log_style)
 				.env("RUST_BACKTRACE", backtrace)
@@ -124,7 +124,7 @@ impl Program {
 			(ProgramName::Npx, _) => package_manager,
 			(ProgramName::Git, _) => "git",
 			(ProgramName::Wally, _) => "wally",
-			(ProgramName::Argon, _) => unreachable!(),
+			(ProgramName::vasc, _) => unreachable!(),
 		}
 		.to_owned();
 
@@ -150,7 +150,7 @@ impl Program {
 
 	fn handle_error<T>(&self, error: Error) -> Result<Option<T>> {
 		if error.kind() == ErrorKind::NotFound {
-			argon_error!("{}", self.get_error(&self.message));
+			vasc_error!("{}", self.get_error(&self.message));
 
 			if logger::prompt(&self.get_prompt(), false) {
 				open::that(self.get_link())?;
@@ -179,7 +179,7 @@ impl Program {
 				)
 			}
 			ProgramName::Wally => format!("{}: {} is not installed", error, "Wally"),
-			ProgramName::Argon => unreachable!(),
+			ProgramName::vasc => unreachable!(),
 		}
 	}
 
@@ -190,7 +190,7 @@ impl Program {
 			ProgramName::Git => "Git",
 			ProgramName::Npm | ProgramName::Npx => &config.package_manager,
 			ProgramName::Wally => "Wally",
-			ProgramName::Argon => unreachable!(),
+			ProgramName::vasc => unreachable!(),
 		};
 
 		format!("Do you want to install {} now?", program.bold())
@@ -208,7 +208,7 @@ impl Program {
 			}
 			.to_owned(),
 			ProgramName::Wally => "https://wally.run".into(),
-			ProgramName::Argon => unreachable!(),
+			ProgramName::vasc => unreachable!(),
 		}
 	}
 }

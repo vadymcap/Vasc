@@ -7,9 +7,9 @@ use crate::util;
 #[post("/stop")]
 async fn main() -> impl Responder {
 	trace!("Received request: stop");
-	info!("Stopping Argon!");
+	info!("Stopping vasc!");
 
 	util::kill_process(process::id());
 
-	HttpResponse::Ok().body("Argon stopped successfully")
+	HttpResponse::Ok().body("vasc stopped successfully")
 }

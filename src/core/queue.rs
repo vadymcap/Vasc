@@ -4,7 +4,7 @@ use crossbeam_channel::{Receiver, Sender};
 use std::{collections::HashMap, sync::RwLock};
 
 use crate::{
-	argon_warn,
+	vasc_warn,
 	config::Config,
 	constants::QUEUE_TIMEOUT,
 	server::{self, Message},
@@ -87,7 +87,7 @@ impl Queue {
 			*unsynced_changes += 1;
 
 			if max_unsynced_changes > 0 && *unsynced_changes >= max_unsynced_changes {
-				argon_warn!(
+				vasc_warn!(
 					"There are {} unsynced changes. Connect at least one client to this server or increase max_unsynced_changes setting to suppress this warning",
 					unsynced_changes.to_string().bold()
 				);

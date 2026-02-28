@@ -82,7 +82,7 @@ pub fn focus(title: Option<String>) -> Result<()> {
 					r#"tell application "System Events"
 						repeat with theProcess in processes whose name is "RobloxStudio"
 								tell theProcess
-									set windowList to windows whose name contains "Argon - Roblox Studio"
+									set windowList to windows whose name contains "vasc - Roblox Studio"
 									
 									if (count of windowList) > 0 then
 										set frontmost to true

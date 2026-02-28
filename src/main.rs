@@ -9,7 +9,7 @@ use std::{
 	thread,
 };
 
-use argon::{argon_error, cli::Cli, config::Config, crash_handler, installer, logger, stats, updater};
+use vasc::{vasc_error, cli::Cli, config::Config, crash_handler, installer, logger, stats, updater};
 
 const PROFILER_ADDRESS: &str = "localhost:8888";
 
@@ -53,8 +53,8 @@ fn main() -> ExitCode {
 	}
 
 	match installation {
-		Ok(()) => info!("Argon installation verified successfully!"),
-		Err(err) => warn!("Failed to verify Argon installation: {err}"),
+		Ok(()) => info!("vasc installation verified successfully!"),
+		Err(err) => warn!("Failed to verify vasc installation: {err}"),
 	}
 
 	let handle = thread::spawn(move || {
@@ -94,7 +94,7 @@ fn main() -> ExitCode {
 			ExitCode::SUCCESS
 		}
 		Err(err) => {
-			argon_error!("{}", err);
+			vasc_error!("{}", err);
 			ExitCode::FAILURE
 		}
 	};

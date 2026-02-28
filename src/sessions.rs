@@ -31,7 +31,7 @@ struct Sessions {
 }
 
 fn get_sessions() -> Result<Sessions> {
-	let path = util::get_argon_dir()?.join("sessions.toml");
+	let path = util::get_vasc_dir()?.join("sessions.toml");
 
 	if path.exists() {
 		match toml::from_str(&fs::read_to_string(&path)?) {
@@ -51,7 +51,7 @@ fn get_sessions() -> Result<Sessions> {
 }
 
 fn set_sessions(sessions: &Sessions) -> Result<()> {
-	let path = util::get_argon_dir()?.join("sessions.toml");
+	let path = util::get_vasc_dir()?.join("sessions.toml");
 
 	fs::write(path, toml::to_string(sessions)?)?;
 

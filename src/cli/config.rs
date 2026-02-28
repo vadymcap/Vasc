@@ -5,8 +5,8 @@ use open;
 use std::{env, fs::File, path::PathBuf};
 
 use crate::{
-	argon_info,
-	config::{Config as ArgonConfig, ConfigKind},
+	vasc_info,
+	config::{Config as vascConfig, ConfigKind},
 	ext::PathExt,
 	logger, util,
 };
@@ -41,30 +41,30 @@ pub struct Config {
 
 impl Config {
 	pub fn main(self) -> Result<()> {
-		let config = ArgonConfig::new();
+		let config = vascConfig::new();
 
 		let config_kind = match self.config.unwrap_or_default() {
 			ConfigType::Default => ConfigKind::Default,
-			ConfigType::Global => ConfigKind::Global(util::get_argon_dir()?.join("config.toml")),
-			ConfigType::Workspace => ConfigKind::Workspace(env::current_dir()?.join("argon.toml")),
+			ConfigType::Global => ConfigKind::Global(util::get_vasc_dir()?.join("config.toml")),
+			ConfigType::Workspace => ConfigKind::Workspace(env::current_dir()?.join("vasc.toml")),
 		};
 
 		if *config.kind() == ConfigKind::Default
 			|| (config_kind != ConfigKind::Default && *config.kind() != config_kind)
 		{
 			drop(config);
-			ArgonConfig::load_virtual(config_kind)?;
+			vascConfig::load_virtual(config_kind)?;
 		} else {
 			drop(config);
 		};
 
-		let config = ArgonConfig::new();
+		let config = vascConfig::new();
 
 		if self.list {
-			argon_info!(
+			vasc_info!(
 				"List of all available config options:\n\n{}\nVisit {} to learn more details!",
 				config.list(),
-				"https://argon.wiki/docs/configuration#global-config".bold()
+				"https://vasc.wiki/docs/configuration#global-config".bold()
 			);
 
 			return Ok(());
@@ -81,7 +81,7 @@ impl Config {
 				File::create(config_path)?;
 			}
 
-			argon_info!(
+			vasc_info!(
 				"Restored all settings to default values in {} config",
 				config.kind().to_string().bold()
 			);
@@ -92,7 +92,7 @@ impl Config {
 		if let Some(path) = self.export {
 			config.save(&path)?;
 
-			argon_info!(
+			vasc_info!(
 				"Exported {} to {} config",
 				config.kind().to_string().bold(),
 				path.to_string().bold()
@@ -104,7 +104,7 @@ impl Config {
 		match (self.setting, self.value) {
 			(Some(setting), Some(value)) => {
 				drop(config);
-				let mut config = ArgonConfig::new_mut();
+				let mut config = vascConfig::new_mut();
 
 				if config.has_setting(&setting) {
 					if let Err(err) = config.set(&setting, &value) {
@@ -113,7 +113,7 @@ impl Config {
 
 					config.save(&config_path)?;
 
-					argon_info!(
+					vasc_info!(
 						"Set {} setting to {} in {} config",
 						setting.bold(),
 						value.bold(),
@@ -124,11 +124,11 @@ impl Config {
 				}
 			}
 			(Some(setting), None) => {
-				let default = ArgonConfig::default();
+				let default = vascConfig::default();
 
 				if default.has_setting(&setting) {
 					drop(config);
-					let mut config = ArgonConfig::new_mut();
+					let mut config = vascConfig::new_mut();
 
 					config
 						.set(&setting, &default.get(&setting).unwrap().to_string())
@@ -136,7 +136,7 @@ impl Config {
 
 					config.save(&config_path)?;
 
-					argon_info!(
+					vasc_info!(
 						"Set {} to its default value in {} config",
 						setting.bold(),
 						config.kind().to_string().bold()
@@ -162,7 +162,7 @@ impl Config {
 					}
 				}
 
-				argon_info!("Opened config file. Manually go to: {}", config_path.to_string().bold());
+				vasc_info!("Opened config file. Manually go to: {}", config_path.to_string().bold());
 
 				open::that(config_path)?;
 			}
