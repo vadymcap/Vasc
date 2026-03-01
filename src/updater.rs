@@ -70,8 +70,8 @@ fn update_cli(prompt: bool, force: bool) -> Result<bool> {
 	};
 
 	let update = Update::configure()
-		.repo_owner("vasc-rbx")
-		.repo_name("vasc")
+		.repo_owner("vadymcap")
+		.repo_name("Vasc")
 		.bin_name("vasc")
 		.target(target)
 		.show_download_progress(true)
@@ -119,7 +119,7 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 	let plugin_path = get_plugin_path()?;
 
 	let update = Update::configure()
-		.repo_owner("vasc-rbx")
+		.repo_owner("vadymcap")
 		.repo_name("vasc-roblox")
 		.bin_name("vasc.rbxm")
 		.target("")

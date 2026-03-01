@@ -1,5 +1,8 @@
 name: Release
 
+permissions:
+  contents: write
+
 on:
   push:
     tags: ["*"]
@@ -41,48 +44,28 @@ jobs:
           git tag -fa ${{ github.ref_name }} -m "Release ${{ github.ref_name }}"
           git push -f --tags
 
-  draft-release:
-    name: Draft Release
+  ensure-release:
+    name: Ensure Release
     runs-on: ubuntu-latest
     needs: bump
 
-    outputs:
-      upload_url: ${{ steps.create-release.outputs.upload_url }}
-      release_id: ${{ steps.create-release.outputs.id }}
-
     steps:
-      - uses: actions/checkout@v4
+      - name: Create or Update Release
+        uses: softprops/action-gh-release@v2
         with:
-          ref: main
-
-      - name: Read Changelog
-        id: read-changes
-        uses: mindsers/changelog-reader-action@v2
-        with:
-          version: ${{ github.ref_name }}
-
-      - name: Get previous Tag
-        id: previous-tag
-        uses: WyriHaximus/github-action-get-previous-tag@v1
-
-      - name: Create Release
-        id: create-release
-        uses: shogo82148/actions-create-release@v1
-        with:
-          release_name: ${{ github.ref_name }}
-          body: |
-            ## Changelog
-            ${{ steps.read-changes.outputs.changes }}
+          name: ${{ github.ref_name }}
+          tag_name: ${{ github.ref_name }}
           prerelease: ${{ contains(github.ref_name, 'pre') }}
-          notes_start_tag: ${{ steps.previous-tag.outputs.tag }}
           generate_release_notes: true
-          commitish: main
-          draft: true
+          draft: false
 
   build:
     name: Build (${{ matrix.label }})
     runs-on: ${{ matrix.os }}
-    needs: draft-release
+    needs: ensure-release
+
+    env:
+      ASSET_NAME: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
 
     strategy:
       matrix:
@@ -126,47 +109,29 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       - name: Archive
+        if: ${{ matrix.host != 'windows' }}
         shell: bash
         run: |
-          mkdir release
+          mkdir -p release
+          cp "target/${{ matrix.target }}/release/vasc" release/
+          cd release
+          zip -9 "../${ASSET_NAME}" vasc
 
-          if [ "${{ matrix.host }}" = "windows" ]; then
-            cp "target/${{ matrix.target }}/release/vasc.exe" release/
-            cd release
-            7z a ../release.zip *
-          else
-            cp "target/${{ matrix.target }}/release/vasc" release/
-            cd release
-            zip ../release.zip *
-          fi
+      - name: Archive (Windows)
+        if: ${{ matrix.host == 'windows' }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release -Force | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/vasc.exe" "release/vasc.exe"
+          Compress-Archive -Path "release/vasc.exe" -DestinationPath "$env:ASSET_NAME" -Force
 
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
-          path: release.zip
+          name: ${{ env.ASSET_NAME }}
+          path: ${{ env.ASSET_NAME }}
 
       - name: Upload to Release
-        uses: shogo82148/actions-upload-release-asset@v1
-        with:
-          upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
-          asset_path: release.zip
-
-  publish-release:
-    name: Publish Release
-    runs-on: ubuntu-latest
-    needs: [build, draft-release]
-
-    steps:
-      - name: Publish on GitHub
-        uses: eregon/publish-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          release_id: ${{ needs.draft-release.outputs.release_id }}
-
-      # - name: Publish on crates.io
-      #   run: cargo publish
-      #   env:
-      #     CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" "${{ env.ASSET_NAME }}" --repo "${{ github.repository }}" --clobber
