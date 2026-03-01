@@ -37,6 +37,48 @@ This repository is the core of the VASC project — all processing happens here.
 | **vasc-vscode** | VS Code extension — GUI wrapper around the CLI |
 | **vasc-roblox** | Studio plugin — required for live sync to function |
 
+## Run locally (Windows)
+
+1. Install Rust: https://rustup.rs
+2. Install Visual C++ build tools (required for `link.exe`):
+
+```powershell
+winget install --id Microsoft.VisualStudio.2022.BuildTools --accept-package-agreements --accept-source-agreements --override "--quiet --wait --norestart --add Microsoft.VisualStudio.Workload.VCTools --includeRecommended"
+```
+
+3. Build the CLI:
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\build-windows.ps1
+```
+
+Output binary: `target\release\vasc.exe`
+
+## Create release binaries
+
+Cross-platform binaries are built automatically by GitHub Actions in [`.github/workflows/release.yml`](.github/workflows/release.yml).
+
+Publish a new tag to trigger the build pipeline:
+
+```bash
+git tag 2.0.30
+git push origin 2.0.30
+```
+
+Artifacts uploaded to GitHub Release include:
+- `windows-x86_64` (`vasc.exe` in zip)
+- `linux-x86_64`
+- `macos-x86_64`
+- `macos-aarch64`
+
+For local Windows packaging (manual testing):
+
+```powershell
+powershell -ExecutionPolicy Bypass -File .\scripts\package-windows.ps1 -Version 2.0.30
+```
+
+This creates `vasc-2.0.30-windows-x86_64.zip` in repository root.
+
 ---
 
 <div align="center">

@@ -75,7 +75,7 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 	let style = util::get_progress_style();
 
 	let update = Update::configure()
-		.repo_owner("vasc-rbx")
+		.repo_owner("vadymcap")
 		.repo_name("vasc-roblox")
 		.bin_name("vasc.rbxm")
 		.target("")
