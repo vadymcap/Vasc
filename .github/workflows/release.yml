@@ -8,55 +8,17 @@ on:
     tags: ["*"]
 
 jobs:
-  bump:
-    name: Bump Version
-    runs-on: ubuntu-latest
-
-    steps:
-      - uses: actions/checkout@v4
-        with:
-          ref: main
-
-      - name: Update Changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@v3
-        with:
-          tag: ${{ github.ref_name }}
-
-      - name: Bump Cargo version
-        id: version-bump
-        uses: DervexDev/file-version-bumper@v1
-        with:
-          path: ./Cargo.toml
-
-      - name: Update Cargo lock
-        run: cargo update --workspace
-
-      - name: Commit and Push
-        uses: EndBug/add-and-commit@v9
-        if: ${{ github.ref_name != steps.version-bump.outputs.old_version }}
-        with:
-          message: Bump version to ${{ github.ref_name }}
-          default_author: github_actions
-
-      - name: Update tag
-        if: ${{ github.ref_name != steps.version-bump.outputs.old_version }}
-        run: |
-          git tag -fa ${{ github.ref_name }} -m "Release ${{ github.ref_name }}"
-          git push -f --tags
-
   draft-release:
-    name: Draft Release
+    name: Create Release
     runs-on: ubuntu-latest
-    needs: bump
 
     outputs:
       upload_url: ${{ steps.create-release.outputs.upload_url }}
-      release_id: ${{ steps.create-release.outputs.id }}
 
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.ref_name }}
 
       - name: Read Changelog
         id: read-changes
@@ -79,8 +41,8 @@ jobs:
           prerelease: ${{ contains(github.ref_name, 'pre') }}
           notes_start_tag: ${{ steps.previous-tag.outputs.tag }}
           generate_release_notes: true
-          commitish: main
-          draft: true
+          commitish: ${{ github.ref_name }}
+          draft: false
 
   build:
     name: Build (${{ matrix.label }})
@@ -136,6 +98,7 @@ jobs:
             cp "target/${{ matrix.target }}/release/vasc.exe" release/
             cd release
             7z a ../release.zip *
+            cp ../release.zip ../release-win32-x64.zip
           else
             cp "target/${{ matrix.target }}/release/vasc" release/
             cd release
@@ -155,20 +118,10 @@ jobs:
           asset_name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
           asset_path: release.zip
 
-  publish-release:
-    name: Publish Release
-    runs-on: ubuntu-latest
-    needs: [build, draft-release]
-
-    steps:
-      - name: Publish on GitHub
-        uses: eregon/publish-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Upload Windows Compatibility Asset
+        if: ${{ matrix.host == 'windows' }}
+        uses: shogo82148/actions-upload-release-asset@v1
         with:
-          release_id: ${{ needs.draft-release.outputs.release_id }}
-
-      # - name: Publish on crates.io
-      #   run: cargo publish
-      #   env:
-      #     CARGO_REGISTRY_TOKEN: ${{ secrets.CARGO_REGISTRY_TOKEN }}
+          upload_url: ${{ needs.draft-release.outputs.upload_url }}
+          asset_name: vasc-${{ github.ref_name }}-win32-x64.zip
+          asset_path: release-win32-x64.zip
