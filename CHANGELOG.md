@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.33] - 2026-03-01
+
+### Changed
+
+- Release workflow now publishes directly from tags and uploads a Windows compatibility asset (`win32-x64`) for updater/installer target matching.
+
 ## [2.0.32] - 2026-03-01
 
 ## [2.0.27] - 2025-12-10
@@ -423,7 +429,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Brand new Argon CLI, written in Rust
 
-[unreleased]: https://github.com/vadymcap/Vasc/compare/2.0.32...HEAD
+[unreleased]: https://github.com/vadymcap/Vasc/compare/2.0.33...HEAD
+[2.0.33]: https://github.com/vadymcap/Vasc/compare/2.0.32...2.0.33
 [2.0.32]: https://github.com/vadymcap/Vasc/compare/2.0.27...2.0.32
 [2.0.27]: https://github.com/argon-rbx/argon/compare/2.0.26...2.0.27
 [2.0.26]: https://github.com/argon-rbx/argon/compare/2.0.25...2.0.26
