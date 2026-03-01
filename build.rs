@@ -19,7 +19,7 @@ fn main() -> Result<()> {
 	}
 
 	builder
-		.repo_owner("vasc-rbx")
+		.repo_owner("vadymcap")
 		.repo_name("vasc-roblox")
 		.bin_name("vasc.rbxm")
 		.bin_install_path(out_path)
