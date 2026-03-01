@@ -2,7 +2,7 @@
 name = "vasc-rbx"
 authors = ["Dervex"]
 description = "Full featured tool for Roblox development"
-repository = "https://github.com/vadymcap/Vasc-2.0.27"
+repository = "https://github.com/vadymcap/Vasc"
 license = "Apache-2.0"
 version = "2.0.27"
 edition = "2021"

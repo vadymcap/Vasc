@@ -3,9 +3,14 @@
 bold=$(tput bold)
 normal=$(tput sgr0)
 
-current=$(curl https://api.github.com/repos/vasc-rbx/vasc/releases/latest -s | grep -i "tag_name" | awk -F '"' '{print $4}')
+repo=${VASC_RELEASE_REPO:-"vadymcap/Vasc"}
+current=$(curl "https://api.github.com/repos/${repo}/releases/latest" -s | grep -i "tag_name" | awk -F '"' '{print $4}')
 
-echo $current | tr -d '\n' | pbcopy 2> /dev/null
+if command -v pbcopy > /dev/null 2>&1; then
+	echo "$current" | tr -d '\n' | pbcopy 2> /dev/null
+elif command -v clip.exe > /dev/null 2>&1; then
+	echo "$current" | tr -d '\n' | clip.exe > /dev/null 2>&1
+fi
 
 echo Current vasc version is: ${bold}$current${normal}
 echo
