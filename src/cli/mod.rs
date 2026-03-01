@@ -22,14 +22,14 @@ mod update;
 
 macro_rules! about {
 	() => {
-		concat!("vasc ", env!("CARGO_PKG_VERSION"))
+		concat!("Argon ", env!("CARGO_PKG_VERSION"))
 	};
 }
 
 macro_rules! long_about {
 	() => {
 		concat!(
-			"vasc ",
+			"Argon ",
 			env!("CARGO_PKG_VERSION"),
 			"\n",
 			env!("CARGO_PKG_DESCRIPTION"),

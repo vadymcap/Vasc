@@ -4,7 +4,7 @@ use std::path::{Path, PathBuf};
 use uuid::Uuid;
 
 use crate::{
-	vasc_error, vasc_warn,
+	argon_error, argon_warn,
 	config::Config,
 	core::meta::{Meta, SyncbackFilter},
 	ext::PathExt,
@@ -109,7 +109,7 @@ pub fn verify_name(name: &mut String, meta: &mut Meta) -> bool {
 
 	if !messages.is_empty() {
 		if Config::new().rename_instances {
-			vasc_warn!(
+			argon_warn!(
 				"Instance with name: {} got renamed to: {}, because: {}!",
 				name.bold(),
 				renamed.bold(),
@@ -121,7 +121,7 @@ pub fn verify_name(name: &mut String, meta: &mut Meta) -> bool {
 
 			return true;
 		} else {
-			vasc_error!(
+			argon_error!(
 				"Instance with name: {} is corrupted: {}! Skipping..",
 				name.bold(),
 				messages.iter().map(|m| m.as_str()).collect::<Vec<&str>>().join(" & ")
@@ -147,7 +147,7 @@ pub fn verify_path(path: &mut PathBuf, name: &mut String, meta: &mut Meta, vfs: 
 		let renamed = format!("{}_{}", name, Uuid::new_v4());
 		let renamed_path = path.with_file_name(format!("{renamed}{suffix}"));
 
-		vasc_warn!(
+		argon_warn!(
 			"Instance with path: {} got renamed to: {}, because it already exists!",
 			path.to_string().bold(),
 			renamed_path.to_string().bold()
@@ -160,7 +160,7 @@ pub fn verify_path(path: &mut PathBuf, name: &mut String, meta: &mut Meta, vfs: 
 
 		true
 	} else {
-		vasc_error!(
+		argon_error!(
 			"Instance with path: {} already exists! Skipping..",
 			path.to_string().bold()
 		);
@@ -171,7 +171,7 @@ pub fn verify_path(path: &mut PathBuf, name: &mut String, meta: &mut Meta, vfs: 
 
 pub fn validate_properties(properties: Properties, filter: &SyncbackFilter) -> Properties {
 	// Temporary solution for empty Luau maps being serialized as arrays
-	if properties.contains_key(&ustr("vascEmpty")) {
+	if properties.contains_key(&ustr("ArgonEmpty")) {
 		UstrMap::new()
 	} else {
 		properties

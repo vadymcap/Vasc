@@ -7,7 +7,7 @@ use std::path::Path;
 
 use super::new_snapshot;
 use crate::{
-	vasc_warn,
+	argon_warn,
 	core::{
 		meta::{Context, Meta, NodePath, Source},
 		snapshot::Snapshot,
@@ -140,8 +140,8 @@ pub fn new_snapshot_node(
 				snapshot = path_snapshot;
 			}
 		} else if let ProjectPath::Required(_) = path_node {
-			vasc_warn!(
-				"Path specified in the project does not exist: {}. Please create this path and restart vasc \
+			argon_warn!(
+				"Path specified in the project does not exist: {}. Please create this path and restart Argon \
 				to watch for file changes in this path or remove it from the project to suppress this warning",
 				path.to_string().bold()
 			);

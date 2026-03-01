@@ -32,7 +32,7 @@ pub fn get_username() -> String {
 }
 
 pub fn get_plugin_path() -> Result<PathBuf> {
-	Ok(RobloxStudio::locate()?.plugins_path().join("vasc.rbxm"))
+	Ok(RobloxStudio::locate()?.plugins_path().join("Vasc.rbxm"))
 }
 
 /// Checks if the given `class` is a service

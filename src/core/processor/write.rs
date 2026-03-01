@@ -543,7 +543,7 @@ pub fn apply_update(snapshot: UpdatedSnapshot, tree: &mut Tree, vfs: &Vfs) -> Re
 			}
 
 			if let Some(_meta) = snapshot.meta {
-				// Currently vasc client does not update meta
+				// Currently Argon client does not update meta
 				unreachable!()
 			}
 		}
@@ -609,7 +609,7 @@ pub fn apply_update(snapshot: UpdatedSnapshot, tree: &mut Tree, vfs: &Vfs) -> Re
 			}
 
 			if let Some(_meta) = snapshot.meta {
-				// Currently vasc client does not update meta
+				// Currently Argon client does not update meta
 				unreachable!()
 			}
 		}

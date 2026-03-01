@@ -12,7 +12,7 @@ use crate::{vasc_error, config::Config, ext::WriteStyleExt, logger, util};
 
 #[derive(PartialEq)]
 pub enum ProgramName {
-	vasc,
+	Argon,
 	Git,
 	Npm,
 	Npx,
@@ -95,8 +95,8 @@ impl Program {
 	}
 
 	fn get_command(&self) -> Command {
-		if self.program == ProgramName::vasc {
-			let mut command = Command::new(env::current_exe().unwrap_or(PathBuf::from("vasc")));
+		if self.program == ProgramName::Argon {
+			let mut command = Command::new(env::current_exe().unwrap_or(PathBuf::from("argon")));
 
 			let verbosity = util::env_verbosity().as_str();
 			let log_style = util::env_log_style().to_string();
@@ -105,7 +105,7 @@ impl Program {
 
 			command
 				.args(self.args.clone())
-				.arg("--vasc-spawn")
+				.arg("--argon-spawn")
 				.env("RUST_VERBOSE", verbosity)
 				.env("RUST_LOG_STYLE", log_style)
 				.env("RUST_BACKTRACE", backtrace)
@@ -124,7 +124,7 @@ impl Program {
 			(ProgramName::Npx, _) => package_manager,
 			(ProgramName::Git, _) => "git",
 			(ProgramName::Wally, _) => "wally",
-			(ProgramName::vasc, _) => unreachable!(),
+			(ProgramName::Argon, _) => unreachable!(),
 		}
 		.to_owned();
 
@@ -179,7 +179,7 @@ impl Program {
 				)
 			}
 			ProgramName::Wally => format!("{}: {} is not installed", error, "Wally"),
-			ProgramName::vasc => unreachable!(),
+			ProgramName::Argon => unreachable!(),
 		}
 	}
 
@@ -190,7 +190,7 @@ impl Program {
 			ProgramName::Git => "Git",
 			ProgramName::Npm | ProgramName::Npx => &config.package_manager,
 			ProgramName::Wally => "Wally",
-			ProgramName::vasc => unreachable!(),
+			ProgramName::Argon => unreachable!(),
 		};
 
 		format!("Do you want to install {} now?", program.bold())
@@ -208,7 +208,7 @@ impl Program {
 			}
 			.to_owned(),
 			ProgramName::Wally => "https://wally.run".into(),
-			ProgramName::vasc => unreachable!(),
+			ProgramName::Argon => unreachable!(),
 		}
 	}
 }

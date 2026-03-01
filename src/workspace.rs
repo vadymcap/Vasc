@@ -273,7 +273,7 @@ fn add_license(path: &Path, license: &str, fallback: &str) -> Result<()> {
 	let url = format!("https://api.github.com/licenses/{license}");
 
 	let license_template = || -> Result<String> {
-		match Client::new().get(url).header(USER_AGENT, "vasc").send() {
+		match Client::new().get(url).header(USER_AGENT, "Vasc").send() {
 			Ok(response) => {
 				let json = response.json::<serde_json::Value>()?;
 

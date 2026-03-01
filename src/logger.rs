@@ -9,20 +9,35 @@ use std::{fmt, io::Write};
 
 use crate::util;
 
-// These vasc logs ignore verbosity level, aside of `Off`
+// These Vasc logs ignore verbosity level, aside of `Off`
 #[macro_export]
 macro_rules! vasc_error {
-    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Error, $($arg)+))
+	($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Error, $($arg)+))
 }
 
 #[macro_export]
 macro_rules! vasc_warn {
-    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Warn, $($arg)+))
+	($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Warn, $($arg)+))
 }
 
 #[macro_export]
 macro_rules! vasc_info {
-    ($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Info, $($arg)+))
+	($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Info, $($arg)+))
+}
+
+#[macro_export]
+macro_rules! argon_error {
+	($($arg:tt)+) => ($crate::vasc_error!($($arg)+))
+}
+
+#[macro_export]
+macro_rules! argon_warn {
+	($($arg:tt)+) => ($crate::vasc_warn!($($arg)+))
+}
+
+#[macro_export]
+macro_rules! argon_info {
+	($($arg:tt)+) => ($crate::vasc_info!($($arg)+))
 }
 
 pub fn init(verbosity: LevelFilter, log_style: WriteStyle) {

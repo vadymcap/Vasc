@@ -84,30 +84,30 @@ fn update_cli(prompt: bool, force: bool) -> Result<bool> {
 		if !prompt
 			|| logger::prompt(
 				&format!(
-					"New vasc version: {} is available! Would you like to update?",
+					"New Vasc version: {} is available! Would you like to update?",
 					release.version.bold()
 				),
 				true,
 			) {
 			if !prompt {
-				vasc_info!("New vasc version: {} is available! Updating..", release.version.bold());
+				vasc_info!("New Vasc version: {} is available! Updating..", release.version.bold());
 			}
 
 			match update.update() {
 				Ok(_) => {
 					vasc_info!(
 						"CLI updated! Restart the program to apply changes. Visit {} to read the changelog",
-						"https://vasc.wiki/changelog/vasc".bold()
+						"https://github.com/vadymcap/Vasc/releases".bold()
 					);
 					return Ok(true);
 				}
-				Err(err) => vasc_error!("Failed to update vasc: {}", err),
+				Err(err) => vasc_error!("Failed to update Vasc: {}", err),
 			}
 		} else {
-			trace!("vasc is out of date!");
+			trace!("Vasc is out of date!");
 		}
 	} else {
-		trace!("vasc is up to date!");
+		trace!("Vasc is up to date!");
 	}
 
 	Ok(false)
@@ -120,8 +120,8 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 
 	let update = Update::configure()
 		.repo_owner("vadymcap")
-		.repo_name("vasc-roblox")
-		.bin_name("vasc.rbxm")
+		.repo_name("Vasc-roblox")
+		.bin_name("Vasc.rbxm")
 		.target("")
 		.show_download_progress(true)
 		.set_progress_style(style.0, style.1)
@@ -134,14 +134,14 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 		if !prompt
 			|| logger::prompt(
 				&format!(
-					"New version of vasc plugin: {} is available! Would you like to update?",
+					"New version of Vasc plugin: {} is available! Would you like to update?",
 					release.version.bold()
 				),
 				true,
 			) {
 			if !prompt {
 				vasc_info!(
-					"New version of vasc plugin: {} is available! Updating..",
+					"New version of Vasc plugin: {} is available! Updating..",
 					release.version.bold()
 				);
 			}
@@ -151,19 +151,19 @@ fn update_plugin(status: &mut UpdateStatus, prompt: bool, force: bool) -> Result
 					vasc_info!(
 						"Roblox plugin updated! Make sure you have {} setting enabled to see changes. Visit {} to read the changelog",
 						"Reload plugins on file changed".bold(),
-						"https://vasc.wiki/changelog/vasc-roblox".bold()
+						"https://github.com/vadymcap/Vasc-roblox/releases".bold()
 					);
 
 					status.plugin_version = release.version;
 					return Ok(true);
 				}
-				Err(err) => vasc_error!("Failed to update vasc plugin: {}", err),
+				Err(err) => vasc_error!("Failed to update Vasc plugin: {}", err),
 			}
 		} else {
-			trace!("vasc plugin is out of date!");
+			trace!("Vasc plugin is out of date!");
 		}
 	} else {
-		trace!("vasc plugin is up to date!");
+		trace!("Vasc plugin is up to date!");
 	}
 
 	Ok(false)

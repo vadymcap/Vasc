@@ -4,14 +4,14 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 use crate::{
-	vasc_error, vasc_info,
+	argon_error, argon_info,
 	config::Config,
 	ext::PathExt,
 	logger, project, stats,
 	workspace::{self, WorkspaceConfig, WorkspaceLicense},
 };
 
-/// Initialize a new vasc project
+/// Initialize a new Argon project
 #[derive(Parser)]
 pub struct Init {
 	/// Project path
@@ -118,7 +118,7 @@ impl Init {
 			if let Some(path) = workspace::init_ts(workspace_config)? {
 				let path = path.resolve()?.join("default.project.json");
 
-				vasc_info!(
+				argon_info!(
 					"Successfully initialized roblox-ts project: {}",
 					path.to_string().bold()
 				);
@@ -128,7 +128,7 @@ impl Init {
 		}
 
 		if project_path.exists() {
-			vasc_error!("Project {} already exists!", project_path.to_string().bold());
+			argon_error!("Project {} already exists!", project_path.to_string().bold());
 
 			if !logger::prompt("Would you like to continue and add potentially missing files?", false) {
 				return Ok(());
@@ -138,7 +138,7 @@ impl Init {
 		workspace_config.project = &project_path;
 		workspace::init(workspace_config)?;
 
-		vasc_info!("Successfully initialized project: {}", project_path.to_string().bold());
+		argon_info!("Successfully initialized project: {}", project_path.to_string().bold());
 
 		stats::projects_created(1);
 

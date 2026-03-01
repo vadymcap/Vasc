@@ -3,7 +3,7 @@ use self_update::backends::github::Update;
 use std::{env, fs::File, path::PathBuf};
 
 fn main() -> Result<()> {
-	let out_path = PathBuf::from(env::var("OUT_DIR")?).join("vasc.rbxm");
+	let out_path = PathBuf::from(env::var("OUT_DIR")?).join("Vasc.rbxm");
 
 	if !cfg!(feature = "plugin") {
 		File::create(out_path)?;
@@ -20,15 +20,15 @@ fn main() -> Result<()> {
 
 	builder
 		.repo_owner("vadymcap")
-		.repo_name("vasc-roblox")
-		.bin_name("vasc.rbxm")
+		.repo_name("Vasc-roblox")
+		.bin_name("Vasc.rbxm")
 		.bin_install_path(out_path)
 		.target("");
 
 	builder
 		.build()?
 		.download()
-		.context("Failed to download vasc plugin from GitHub!")?;
+		.context("Failed to download Vasc plugin from GitHub!")?;
 
 	Ok(())
 }

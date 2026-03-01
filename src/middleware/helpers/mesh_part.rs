@@ -37,7 +37,7 @@ pub fn save_mesh(properties: &Properties) -> Option<String> {
 
 	let result = || -> Result<String> {
 		let pid = process::id().to_string();
-		let path = RobloxStudio::locate()?.content_path().join("vasc").join(&pid);
+		let path = RobloxStudio::locate()?.content_path().join("argon").join(&pid);
 
 		let index = *INDEX.read().unwrap();
 

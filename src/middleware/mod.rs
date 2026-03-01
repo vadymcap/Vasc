@@ -13,7 +13,7 @@ use std::{
 
 use self::data::DataSnapshot;
 use crate::{
-	vasc_warn,
+	argon_warn,
 	constants::BLACKLISTED_PATHS,
 	core::{
 		meta::{Context, Source},
@@ -223,8 +223,8 @@ fn new_snapshot_file(path: &Path, context: &Context, vfs: &Vfs) -> Result<Option
 /// example: `foo/bar/init.luau`
 fn new_snapshot_file_child(path: &Path, context: &Context, vfs: &Vfs) -> Result<Option<Snapshot>> {
 	if path.contains(&[".src.luau"]) || path.contains(&[".src.lua"]) {
-		vasc_warn!(
-			"Your project uses legacy {} files which won't be supported in the next versions of vasc. \
+		argon_warn!(
+			"Your project uses legacy {} files which won't be supported in the next versions of Argon. \
 			Make sure to rename {} file to {} for future compatibility!",
 			".src".bold(),
 			path.to_string().bold(),

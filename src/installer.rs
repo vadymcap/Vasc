@@ -20,7 +20,7 @@ const MODEL_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/m
 const QUICK_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/quick");
 const EMPTY_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/empty");
 
-const vasc_PLUGIN: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/vasc.rbxm"));
+const VASC_PLUGIN: &[u8] = include_bytes!(concat!(env!("OUT_DIR"), "/Vasc.rbxm"));
 
 pub fn is_managed() -> bool {
 	let path = match env::current_exe() {
@@ -76,8 +76,8 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 
 	let update = Update::configure()
 		.repo_owner("vadymcap")
-		.repo_name("vasc-roblox")
-		.bin_name("vasc.rbxm")
+		.repo_name("Vasc-roblox")
+		.bin_name("Vasc.rbxm")
 		.target("")
 		.show_download_progress(show_progress)
 		.set_progress_style(style.0, style.1)
@@ -86,8 +86,8 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 
 	match update.download() {
 		Ok(status) => match status {
-			UpdateStatus::Updated(release) => {
-				vasc_info!("Installed vasc plugin, version: {}", release.version.bold());
+				UpdateStatus::Updated(release) => {
+					vasc_info!("Installed Vasc plugin, version: {}", release.version.bold());
 
 				if path.contains(&["Roblox", "Plugins"]) {
 					let mut status = updater::get_status()?;
@@ -99,17 +99,17 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 			_ => unreachable!(),
 		},
 		Err(err) => {
-			trace!("Failed to install vasc plugin from GitHub: {err}");
+			trace!("Failed to install Vasc plugin from GitHub: {err}");
 
 			#[allow(clippy::const_is_empty)]
-			if vasc_PLUGIN.is_empty() {
-				vasc_error!("No internet connection! Failed to install vasc plugin - no bundled binary found");
+			if VASC_PLUGIN.is_empty() {
+				vasc_error!("No internet connection! Failed to install Vasc plugin - no bundled binary found");
 				return Ok(());
 			}
 
-			fs::write(path, vasc_PLUGIN)?;
+			fs::write(path, VASC_PLUGIN)?;
 
-			vasc_info!("No internet connection! Installed vasc plugin from bundled binary")
+			vasc_info!("No internet connection! Installed Vasc plugin from bundled binary")
 		}
 	}
 
@@ -177,7 +177,7 @@ fn install_template(template: &Dir, path: &Path) -> Result<()> {
 pub fn get_plugin_version() -> String {
 	// May seem hacky, but this function will only be
 	// called once for most users and is non-critical anyway
-	if let Ok(dom) = rbx_binary::from_reader(vasc_PLUGIN) {
+	if let Ok(dom) = rbx_binary::from_reader(VASC_PLUGIN) {
 		for (_, instance) in dom.into_raw().1 {
 			if instance.name == "manifest" && instance.class == "ModuleScript" {
 				if let Some(Variant::String(source)) = instance.properties.get(&ustr("Source")) {

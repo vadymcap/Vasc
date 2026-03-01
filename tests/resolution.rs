@@ -314,7 +314,7 @@ mod unresolved_value {
 
 	#[test]
 	fn string() {
-		assert_eq!(resolve("Instance", "Name", r#""vasc""#), "vasc".into());
+		assert_eq!(resolve("Instance", "Name", r#""Vasc""#), "Vasc".into());
 		assert_eq!(resolve_unambiguous(r#""Cool!""#), "Cool!".into());
 	}
 
@@ -702,7 +702,7 @@ mod resolved_value {
 
 	#[test]
 	fn string() {
-		assert_eq(from_variant("vasc"), json!("vasc"));
+		assert_eq(from_variant("Vasc"), json!("Vasc"));
 	}
 
 	#[test]

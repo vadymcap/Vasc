@@ -6,7 +6,7 @@ use roblox_install::RobloxStudio;
 use std::{fs, path::PathBuf, process};
 
 use crate::{
-	vasc_info,
+	argon_info,
 	config::Config,
 	core::Core,
 	ext::PathExt,
@@ -51,13 +51,13 @@ pub struct Build {
 	#[arg(short, long)]
 	ts: bool,
 
-	/// Run vasc asynchronously
+	/// Run Argon asynchronously
 	#[arg(short = 'A', long = "async")]
 	run_async: bool,
 
-	/// Spawn the vasc child process (internal)
+	/// Spawn the Argon child process (internal)
 	#[arg(long, hide = true)]
-	vasc_spawn: bool,
+	argon_spawn: bool,
 }
 
 impl Build {
@@ -67,7 +67,7 @@ impl Build {
 		Config::load_workspace(project_path.get_parent());
 		let config = Config::new();
 
-		if self.watch && !self.vasc_spawn && (self.run_async || config.run_async) {
+		if self.watch && !self.argon_spawn && (self.run_async || config.run_async) {
 			return self.spawn();
 		}
 
@@ -150,7 +150,7 @@ impl Build {
 		}
 
 		if use_ts {
-			vasc_info!("Compiling TypeScript files..");
+			argon_info!("Compiling TypeScript files..");
 
 			let working_dir = project_path.get_parent();
 
@@ -172,7 +172,7 @@ impl Build {
 
 		core.build(&path, xml)?;
 
-		vasc_info!(
+		argon_info!(
 			"Successfully built project: {} to: {}",
 			project_path.to_string().bold(),
 			path.to_string().bold()
@@ -181,7 +181,7 @@ impl Build {
 		if let Some(path) = &sourcemap_path {
 			core.sourcemap(Some(path.clone()), false)?;
 
-			vasc_info!("Generated sourcemap at: {}", path.to_string().bold());
+			argon_info!("Generated sourcemap at: {}", path.to_string().bold());
 		}
 
 		if self.watch {
@@ -199,7 +199,7 @@ impl Build {
 
 			sessions::add(self.session, None, None, process::id(), config.run_async)?;
 
-			vasc_info!("Watching for changes..");
+			argon_info!("Watching for changes..");
 
 			let queue = core.queue();
 			queue.subscribe_internal().unwrap();
@@ -272,7 +272,7 @@ impl Build {
 			args.push("--ts".into())
 		}
 
-		Program::new(ProgramName::vasc).args(args).spawn()?;
+		Program::new(ProgramName::Argon).args(args).spawn()?;
 
 		Ok(())
 	}

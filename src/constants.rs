@@ -58,7 +58,7 @@ pub fn default_sync_rules() -> &'static Vec<SyncRule> {
 			SyncRule::new(Middleware::ModuleScript)
 				.with_pattern("*.luau")
 				.with_child_pattern("init.luau"),
-			// Luau scripts for vasc Legacy
+			// Luau scripts for Argon Legacy
 			SyncRule::new(Middleware::ServerScript)
 				.with_pattern("*.server.luau")
 				.with_child_pattern(".src.server.luau")
@@ -86,7 +86,7 @@ pub fn default_sync_rules() -> &'static Vec<SyncRule> {
 			SyncRule::new(Middleware::ModuleScript)
 				.with_pattern("*.lua")
 				.with_child_pattern("init.lua"),
-			// Lua scripts for vasc legacy
+			// Lua scripts for Argon legacy
 			SyncRule::new(Middleware::ServerScript)
 				.with_pattern("*.server.lua")
 				.with_child_pattern(".src.server.lua")
