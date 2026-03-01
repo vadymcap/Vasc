@@ -6,6 +6,12 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ## [Unreleased]
 
+## [2.0.34] - 2026-03-01
+
+### Changed
+
+- Stabilized release workflow matrix behavior (`fail-fast: false`), switched build checkout to the tagged ref, and made Windows archiving use native PowerShell compression.
+
 ## [2.0.33] - 2026-03-01
 
 ### Changed
@@ -429,7 +435,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Brand new Argon CLI, written in Rust
 
-[unreleased]: https://github.com/vadymcap/Vasc/compare/2.0.33...HEAD
+[unreleased]: https://github.com/vadymcap/Vasc/compare/2.0.34...HEAD
+[2.0.34]: https://github.com/vadymcap/Vasc/compare/2.0.33...2.0.34
 [2.0.33]: https://github.com/vadymcap/Vasc/compare/2.0.32...2.0.33
 [2.0.32]: https://github.com/vadymcap/Vasc/compare/2.0.27...2.0.32
 [2.0.27]: https://github.com/argon-rbx/argon/compare/2.0.26...2.0.27
