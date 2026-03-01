@@ -17,11 +17,6 @@ jobs:
         with:
           ref: main
 
-      - name: Update Changelog
-        uses: thomaseizinger/keep-a-changelog-new-release@v3
-        with:
-          tag: ${{ github.ref_name }}
-
       - name: Bump Cargo version
         id: version-bump
         uses: DervexDev/file-version-bumper@v1
