@@ -45,6 +45,7 @@ jobs:
     needs: draft-release
 
     strategy:
+      fail-fast: false
       matrix:
         include:
           # x86_64
@@ -72,7 +73,7 @@ jobs:
     steps:
       - uses: actions/checkout@v4
         with:
-          ref: main
+          ref: ${{ github.ref_name }}
 
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
@@ -84,21 +85,23 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
-      - name: Archive
+      - name: Archive (Unix)
+        if: ${{ matrix.host != 'windows' }}
         shell: bash
         run: |
           mkdir release
+          cp "target/${{ matrix.target }}/release/vasc" release/
+          cd release
+          zip ../release.zip *
 
-          if [ "${{ matrix.host }}" = "windows" ]; then
-            cp "target/${{ matrix.target }}/release/vasc.exe" release/
-            cd release
-            7z a ../release.zip *
-            cp ../release.zip ../release-win32-x64.zip
-          else
-            cp "target/${{ matrix.target }}/release/vasc" release/
-            cd release
-            zip ../release.zip *
-          fi
+      - name: Archive (Windows)
+        if: ${{ matrix.host == 'windows' }}
+        shell: pwsh
+        run: |
+          New-Item -ItemType Directory -Path release -Force | Out-Null
+          Copy-Item "target/${{ matrix.target }}/release/vasc.exe" "release/vasc.exe"
+          Compress-Archive -Path "release/vasc.exe" -DestinationPath "release.zip" -Force
+          Copy-Item "release.zip" "release-win32-x64.zip" -Force
 
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
