@@ -22,13 +22,19 @@ fn main() -> Result<()> {
 		.repo_owner("vadymcap")
 		.repo_name("Vasc-roblox")
 		.bin_name("Vasc.rbxm")
-		.bin_install_path(out_path)
+		.bin_install_path(out_path.clone())
 		.target("");
 
-	builder
+	let result = builder
 		.build()?
 		.download()
-		.context("Failed to download Vasc plugin from GitHub!")?;
+		.context("Failed to download Vasc plugin from GitHub!");
+
+	if let Err(err) = result {
+		println!("cargo:warning={err}");
+		println!("cargo:warning=Falling back to empty bundled plugin binary");
+		File::create(out_path)?;
+	}
 
 	Ok(())
 }
