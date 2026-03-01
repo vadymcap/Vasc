@@ -6,7 +6,7 @@ repository = "https://github.com/vadymcap/Vasc"
 documentation = "https://github.com/vadymcap/Vasc"
 homepage = "https://github.com/vadymcap/Vasc"
 license = "Apache-2.0"
-version = "2.0.30"
+version = "2.0.32"
 edition = "2021"
 build = "build.rs"
 
