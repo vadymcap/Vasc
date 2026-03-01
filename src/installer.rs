@@ -7,10 +7,10 @@ use self_update::{backends::github::Update, self_replace, update::UpdateStatus};
 use std::{env, fs, path::Path};
 
 use crate::{
-	vasc_error, vasc_info,
 	ext::PathExt,
 	logger, updater,
 	util::{self, get_plugin_path},
+	vasc_error, vasc_info,
 };
 
 const PLACE_TEMPLATE: Dir = include_dir!("$CARGO_MANIFEST_DIR/assets/templates/place");
@@ -86,8 +86,8 @@ pub fn install_plugin(path: &Path, show_progress: bool) -> Result<()> {
 
 	match update.download() {
 		Ok(status) => match status {
-				UpdateStatus::Updated(release) => {
-					vasc_info!("Installed Vasc plugin, version: {}", release.version.bold());
+			UpdateStatus::Updated(release) => {
+				vasc_info!("Installed Vasc plugin, version: {}", release.version.bold());
 
 				if path.contains(&["Roblox", "Plugins"]) {
 					let mut status = updater::get_status()?;

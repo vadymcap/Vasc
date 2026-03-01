@@ -4,10 +4,10 @@ use crossbeam_channel::{Receiver, Sender};
 use std::{collections::HashMap, sync::RwLock};
 
 use crate::{
-vasc_warn,
 	config::Config,
 	constants::QUEUE_TIMEOUT,
 	server::{self, Message},
+	vasc_warn,
 };
 
 macro_rules! read {

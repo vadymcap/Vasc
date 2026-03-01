@@ -8,7 +8,7 @@ use std::{
 	process::{Child, Command, Output, Stdio},
 };
 
-use crate::{vasc_error, config::Config, ext::WriteStyleExt, logger, util};
+use crate::{config::Config, ext::WriteStyleExt, logger, util, vasc_error};
 
 #[derive(PartialEq)]
 pub enum ProgramName {

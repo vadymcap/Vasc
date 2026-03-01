@@ -5,7 +5,7 @@ use open;
 use panic_message::get_panic_info_message;
 use std::{env, panic, process};
 
-use crate::{vasc_error, logger, util};
+use crate::{logger, util, vasc_error};
 
 const MAX_BACKTRACE_LEN: usize = 6500;
 

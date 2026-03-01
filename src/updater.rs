@@ -11,11 +11,11 @@ use std::{
 };
 
 use crate::{
-	vasc_error, vasc_info,
 	constants::TEMPLATES_VERSION,
 	installer::{get_plugin_version, install_templates},
 	logger,
 	util::{self, get_plugin_path},
+	vasc_error, vasc_info,
 };
 
 static UPDATE_FORCED: Once = Once::new();

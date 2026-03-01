@@ -9,11 +9,10 @@ use std::{
 };
 
 use crate::{
-	vasc_info, vasc_warn,
 	config::Config,
 	ext::PathExt,
 	program::{Program, ProgramName},
-	util,
+	util, vasc_info, vasc_warn,
 };
 
 #[derive(Debug)]

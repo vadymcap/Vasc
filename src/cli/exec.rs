@@ -4,7 +4,7 @@ use reqwest::{blocking::Client, header::CONTENT_TYPE};
 use serde::Serialize;
 use std::{fs, path::MAIN_SEPARATOR};
 
-use crate::{vasc_error, vasc_info, sessions};
+use crate::{sessions, vasc_error, vasc_info};
 
 /// Execute Luau code in Roblox Studio (requires running session)
 #[derive(Parser)]
