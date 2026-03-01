@@ -36,8 +36,8 @@ jobs:
             ${{ steps.read-changes.outputs.changes }}
           prerelease: ${{ contains(github.ref_name, 'pre') }}
           generate_release_notes: true
-          commitish: ${{ github.ref_name }}
           draft: false
+          overwrite: true
 
   build:
     name: Build (${{ matrix.label }})
