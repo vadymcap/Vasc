@@ -102,6 +102,7 @@ self_update = { version = "0.39.0", default-features = false, features = [
 
 [dev-dependencies]
 approx = "0.5.1"
+tempfile = "3.19.1"
 
 [patch.crates-io]
 notify-debouncer-full = { path = "crates/notify-debouncer-full" }

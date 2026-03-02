@@ -8,6 +8,7 @@ use std::env;
 use crate::util;
 
 mod build;
+mod collab;
 mod config;
 mod debug;
 mod doc;
@@ -132,6 +133,7 @@ impl Cli {
 			Commands::Plugin(command) => command.main(),
 			Commands::Config(command) => command.main(),
 			Commands::Doc(command) => command.main(),
+			Commands::Collab(command) => command.main(),
 		}
 	}
 }
@@ -150,4 +152,5 @@ pub enum Commands {
 	Plugin(plugin::Plugin),
 	Config(config::Config),
 	Doc(doc::Doc),
+	Collab(collab::Collab),
 }

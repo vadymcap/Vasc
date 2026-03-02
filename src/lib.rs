@@ -3,6 +3,7 @@
 use rbx_dom_weak::{types::Variant, UstrMap};
 
 pub mod cli;
+pub mod collab;
 pub mod config;
 pub mod constants;
 pub mod core;
