@@ -4,7 +4,7 @@ use rbx_dom_weak::{types::Ref, Ustr, UstrMap};
 use serde::{Deserialize, Serialize};
 use serde_json::Serializer;
 use std::{
-	collections::{BTreeMap, HashMap},
+	collections::{BTreeMap, HashMap, HashSet},
 	fs, mem,
 	path::{Path, PathBuf},
 };
@@ -108,6 +108,9 @@ pub struct Project {
 	pub path: PathBuf,
 	#[serde(skip)]
 	pub workspace_dir: PathBuf,
+	/// Raw patterns loaded from .vascignore (not persisted to JSON)
+	#[serde(skip)]
+	pub vascignore_patterns: Vec<String>,
 }
 
 impl Project {
@@ -124,6 +127,21 @@ impl Project {
 
 		project_path.clone_into(&mut project.path);
 		workspace_dir.clone_into(&mut project.workspace_dir);
+
+		// Load .vascignore if present alongside the project file
+		let vascignore_path = workspace_dir.join(".vascignore");
+		if vascignore_path.exists() {
+			let patterns = parse_vascignore(&vascignore_path)?;
+			for pattern in &patterns {
+				// Only add non-negation patterns to CLI-side ignore_globs
+				if !pattern.starts_with('!') {
+					if let Ok(glob) = Glob::new(pattern) {
+						project.ignore_globs.push(glob);
+					}
+				}
+			}
+			project.vascignore_patterns = patterns;
+		}
 
 		Ok(project)
 	}
@@ -249,10 +267,27 @@ pub struct ProjectDetails {
 	game_id: Option<u64>,
 	place_ids: Vec<u64>,
 	root_refs: Vec<Ref>,
+	/// All ignore patterns (from project JSON + .vascignore) for the plugin
+	ignore_patterns: Vec<String>,
+	/// Hash of ignore_patterns so the plugin can detect changes
+	ignore_hash: String,
 }
 
 impl ProjectDetails {
 	pub fn from_project(project: &Project, tree: &Tree) -> Self {
+		// Collect all ignore patterns: JSON ignore_globs (as strings) + vascignore patterns.
+		// Use a HashSet for O(n+m) deduplication instead of O(n*m).
+		let vascignore_set: HashSet<&str> = project.vascignore_patterns.iter().map(String::as_str).collect();
+		let mut ignore_patterns: Vec<String> = project
+			.ignore_globs
+			.iter()
+			.map(|g| g.as_str().to_owned())
+			.filter(|s| !vascignore_set.contains(s.as_str()))
+			.collect();
+		ignore_patterns.extend(project.vascignore_patterns.clone());
+
+		let ignore_hash = compute_ignore_hash(&ignore_patterns);
+
 		Self {
 			version: env!("CARGO_PKG_VERSION").to_owned(),
 
@@ -265,10 +300,45 @@ impl ProjectDetails {
 			} else {
 				vec![tree.root_ref()]
 			},
+
+			ignore_patterns,
+			ignore_hash,
 		}
 	}
 }
 
 fn default_project_name() -> String {
 	String::from("default")
+}
+
+/// Parse a .vascignore file (gitignore-style) and return the list of patterns.
+/// Blank lines and lines starting with `#` are ignored.
+/// Lines starting with `!` are negation patterns and are preserved as-is.
+pub(crate) fn parse_vascignore(path: &Path) -> Result<Vec<String>> {
+	let contents = fs::read_to_string(path)?;
+	let patterns = contents
+		.lines()
+		.map(str::trim)
+		.filter(|line| !line.is_empty() && !line.starts_with('#'))
+		.map(str::to_owned)
+		.collect();
+	Ok(patterns)
+}
+
+/// Compute a deterministic hex hash of a list of ignore patterns using FNV-1a.
+fn compute_ignore_hash(patterns: &[String]) -> String {
+	const FNV_OFFSET: u64 = 14695981039346656037;
+	const FNV_PRIME: u64 = 1099511628211;
+
+	let mut hash = FNV_OFFSET;
+	for pattern in patterns {
+		for byte in pattern.as_bytes() {
+			hash ^= *byte as u64;
+			hash = hash.wrapping_mul(FNV_PRIME);
+		}
+		// Separate patterns with a null byte to prevent "ab"+"c" == "a"+"bc"
+		hash ^= 0u64;
+		hash = hash.wrapping_mul(FNV_PRIME);
+	}
+	format!("{:016x}", hash)
 }
