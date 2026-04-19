@@ -384,7 +384,7 @@ impl AmbiguousValue {
 				(VariantType::Color3, AmbiguousValue::Array3(color)) => {
 					let (r, g, b) = (color[0] as f32, color[1] as f32, color[2] as f32);
 
-					// Fix for the custom BasePart.Color serialization (https://github.com/argon-rbx/rbx-dom/blob/master/patches/parts.yml#L18)
+					// Fix for the custom BasePart.Color serialization (https://github.com/vasc-rbx/rbx-dom/blob/master/patches/parts.yml#L18)
 					if let Some(data_type) = descriptor.get_custom_serialization() {
 						if data_type == "Color3uint8" && (r > 1.0 || g > 1.0 || b > 1.0) {
 							return Ok(Color3::new(r / 255.0, g / 255.0, b / 255.0).into());

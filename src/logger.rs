@@ -26,17 +26,17 @@ macro_rules! vasc_info {
 }
 
 #[macro_export]
-macro_rules! argon_error {
+macro_rules! vasc_error {
 	($($arg:tt)+) => ($crate::vasc_error!($($arg)+))
 }
 
 #[macro_export]
-macro_rules! argon_warn {
+macro_rules! vasc_warn {
 	($($arg:tt)+) => ($crate::vasc_warn!($($arg)+))
 }
 
 #[macro_export]
-macro_rules! argon_info {
+macro_rules! vasc_info {
 	($($arg:tt)+) => ($crate::vasc_info!($($arg)+))
 }
 

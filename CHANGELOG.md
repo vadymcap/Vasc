@@ -24,8 +24,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Files deleted by commands like `git checkout` not being detected by Argon
-- Formatting of `f32` values being inconsistent between syncback events ([#230](https://github.com/argon-rbx/argon/issues/230))
+- Files deleted by commands like `git checkout` not being detected by Vasc
+- Formatting of `f32` values being inconsistent between syncback events ([#230](https://github.com/vasc-rbx/vasc/issues/230))
 
 ## [2.0.26] - 2025-08-25
 
@@ -43,7 +43,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - CLI can now be updated on Windows on ARM CPUs
-- Argon can now run on older Linux versions (with `glibc 2.35+`)
+- Vasc can now run on older Linux versions (with `glibc 2.35+`)
 - Updating instance meta now triggers client sync
 
 ### Changed
@@ -51,7 +51,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Scripts are now written to the filesystem even if they are empty (syncback)
 - Sourcemap regeneration is now only triggered by relevant changes
 - Project details are now only synced when relevant project properties change
-- `argon config -l` now displays only modified settings in `Current` column
+- `vasc config -l` now displays only modified settings in `Current` column
 
 ## [2.0.24] - 2025-04-28
 
@@ -61,13 +61,13 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Improved performance of `.rbxm` parsing
 - `max_unsynced_changes` setting can now be set to much higher values
 - Automatic Wally detection now supports `ServerPackages` and `DevPackages`
-- Argon legacy namespace migration warning (`.src` to `init`) for every path that contains `.src` in its name
+- Vasc legacy namespace migration warning (`.src` to `init`) for every path that contains `.src` in its name
 
 ### Fixed
 
 - `BasePart.Color` property is now properly converted between `Color3` and `Color3uint8` types
 - Mismatched line endings no longer cause script diffs (all files are now normalized to `LF`)
-- `--license` argument is now independent from the `--docs` argument in `argon init` command
+- `--license` argument is now independent from the `--docs` argument in `vasc init` command
 - Empty StringValues (`.txt` files) are no longer ignored when syncing back
 - Syncback now respects original file extensions so it no longer changes `.lua` to `.luau` when writing
 - Package projects (that contain only root `$path`) are now properly synced back
@@ -78,7 +78,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 - Removed `line_ending` setting in favor of new `ignore_line_endings` setting
 - All project templates now include improved `.gitignore`, `wally.toml` and `project.json` files
 - Empty projects are no longer included in the tree (in result root project cannot be empty!)
-- Argon legacy namespace for child file definitions (`.src`) is no longer supported by following middleware: `StringValue`, `RichStringValue`, `LocalizationTable`, `JsonModule`, `TomlModule`, `YamlModule`, `MsgpackModule`, `JsonModel`, `RbxmModel`, `RbxmxModel`
+- Vasc legacy namespace for child file definitions (`.src`) is no longer supported by following middleware: `StringValue`, `RichStringValue`, `LocalizationTable`, `JsonModule`, `TomlModule`, `YamlModule`, `MsgpackModule`, `JsonModel`, `RbxmModel`, `RbxmxModel`
 
 ## [2.0.23] - 2025-02-05
 
@@ -96,11 +96,11 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Fix meta changes not being updated in the tree (sourcemap regeneration issue for new `.src` and `init` files)
-- Argon no longer crashes when removing files that are described by multiple sync rules
+- Vasc no longer crashes when removing files that are described by multiple sync rules
 
 ### Changed
 
-- `rojo_mode` setting is now `true` by default (will be removed in the future along with Argon legacy namespace)
+- `rojo_mode` setting is now `true` by default (will be removed in the future along with Vasc legacy namespace)
 
 ## [2.0.21] - 2024-11-22
 
@@ -110,7 +110,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Replaced old `argon run` with `argon serve` command in `place` template README
+- Replaced old `vasc run` with `vasc serve` command in `place` template README
 - Latest instance name is now saved in the tree when it was automatically renamed due to the forbidden characters
 
 ### Changed
@@ -177,7 +177,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- Support for workspace-defined Argon config (`argon.toml`)
+- Support for workspace-defined Vasc config (`vasc.toml`)
 - Default templates can now be updated when available (`update_templates` setting)
 - Improved property parsing error details - filesystem and JSON path
 
@@ -188,7 +188,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Automatic updates are no longer cause output mess when running `update` command
-- Plugin no longer updates when running `argon update` for the first time
+- Plugin no longer updates when running `vasc update` for the first time
 
 ## [2.0.15] - 2024-08-13
 
@@ -200,7 +200,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - `RunContext` can no longer be specified inside script's source using comments
-- Argon now returns proper exit code when it fails
+- Vasc now returns proper exit code when it fails
 
 ### Fixed
 
@@ -240,8 +240,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Added
 
 - Experimental support for syncing MeshPart's MeshId
-- Argon now provides the link to [argon.wiki/changelog](https://argon.wiki/changelog) when a new update gets installed
-- All project templates now include `Packages` folder in `use_wally` setting is enabled ([#71](https://github.com/argon-rbx/argon/issues/71))
+- Vasc now provides the link to [vasc.wiki/changelog](https://vasc.wiki/changelog) when a new update gets installed
+- All project templates now include `Packages` folder in `use_wally` setting is enabled ([#71](https://github.com/vasc-rbx/vasc/issues/71))
 
 ### Changed
 
@@ -251,23 +251,23 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Added
 
-- `--async` parameter is now user-exposed for `serve`, `build` and `sourcemap` commands ([#66](https://github.com/argon-rbx/argon/issues/66))
+- `--async` parameter is now user-exposed for `serve`, `build` and `sourcemap` commands ([#66](https://github.com/vasc-rbx/vasc/issues/66))
 - `--default` parameter for `config` command that restores all settings to default values
 
 ### Fixed
 
-- Newline character not being added to the Lua file header in some cases ([#62](https://github.com/argon-rbx/argon/pull/62))
+- Newline character not being added to the Lua file header in some cases ([#62](https://github.com/vasc-rbx/vasc/pull/62))
 - `serve` command now works as expected when running with `run_async` setting enabled
 
 ## [2.0.9] - 2024-06-25
 
 ### Added
 
-- `package_manager` setting that allows to change package manager used when running commands with roblox-ts ([#58](https://github.com/argon-rbx/argon/issues/58))
+- `package_manager` setting that allows to change package manager used when running commands with roblox-ts ([#58](https://github.com/vasc-rbx/vasc/issues/58))
 
 ### Fixed
 
-- `argon init` now works properly with `PATH` argument and `roblox-ts`, `--yes` options ([#51](https://github.com/argon-rbx/argon/issues/51))
+- `vasc init` now works properly with `PATH` argument and `roblox-ts`, `--yes` options ([#51](https://github.com/vasc-rbx/vasc/issues/51))
 
 ## [2.0.8] - 2024-06-16
 
@@ -282,8 +282,8 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Fixed
 
 - Sourcemap now includes project files in `filePaths`
-- Script `Enabled` and `RunContext` flags no longer comment first line ([#28](https://github.com/argon-rbx/argon/issues/28))
-- `rojo_mode` setting is now respected in two-way sync ([#47](https://github.com/argon-rbx/argon/issues/47))
+- Script `Enabled` and `RunContext` flags no longer comment first line ([#28](https://github.com/vasc-rbx/vasc/issues/28))
+- `rojo_mode` setting is now respected in two-way sync ([#47](https://github.com/vasc-rbx/vasc/issues/47))
 
 ## [2.0.7] - 2024-05-12
 
@@ -327,7 +327,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - You can now specify to update CLI or plugin only in `update` command
-- Properties are now serialized alphabetically ([#25](https://github.com/argon-rbx/argon/pull/25))
+- Properties are now serialized alphabetically ([#25](https://github.com/vasc-rbx/vasc/pull/25))
 - Renamed `auto_detect` setting to `detect_project`
 
 ## [2.0.2] - 2024-05-03
@@ -338,20 +338,20 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Changed
 
-- Argon now uses the `.luau` extension by default when syncing back from Roblox Studio
-- When running `argon plugin install` with no internet connection the bundled binary will be used
+- Vasc now uses the `.luau` extension by default when syncing back from Roblox Studio
+- When running `vasc plugin install` with no internet connection the bundled binary will be used
 
 ## [2.0.1] - 2024-05-02
 
 ### Fixed
 
-- `ArgonEmpty` property is no longer serialized on child instances
+- `VascEmpty` property is no longer serialized on child instances
 - `math.huge` is no longer saved as JSON `null` (temporarily it's just a big number)
 
 ### Changed
 
 - Increased client write request payload size limit from `256 KiB` to `512 MiB`!
-- Error tracing when Argon fails to snapshot nested file or directory
+- Error tracing when Vasc fails to snapshot nested file or directory
 - Significantly decreased initial file system snapshotting time (caused by Notify)
 
 ## [2.0.0] - 2024-05-01
@@ -371,7 +371,7 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 - Instance source tracking and meta management
 - Standard file system with additional methods
-- Argon network protocol now uses MessagePack instead of JSON
+- Vasc network protocol now uses MessagePack instead of JSON
 - Sessions that crashed now get removed from `sessions.toml` file
 
 ### Fixed
@@ -385,25 +385,25 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 ### Changed
 
 - `plugin` command now creates directory if the provided one does not exist
-- Argon plugin gets installed automatically at the first Argon launch
+- Vasc plugin gets installed automatically at the first Vasc launch
 - Config is now only read once
 
 ## [2.0.0-pre4] - 2024-03-21
 
 ### Added
 
-- `plugin` command that installs Argon plugin locally
-- Argon CLI and plugin updater
+- `plugin` command that installs Vasc plugin locally
+- Vasc CLI and plugin updater
 - More customization with global config
 
 ### Changed
 
 - `run` command is now `serve`
-- Changed default project name from `.argon.project.json` to `default.project.json`
+- Changed default project name from `.vasc.project.json` to `default.project.json`
 
 ### Fixed
 
-- Sync rules no longer ignore specified project path ([#23](https://github.com/argon-rbx/argon/issues/23))
+- Sync rules no longer ignore specified project path ([#23](https://github.com/vasc-rbx/vasc/issues/23))
 
 ## [2.0.0-pre3] - 2024-03-19
 
@@ -427,48 +427,48 @@ The format is based on [Keep a Changelog](https://keepachangelog.com/en/1.1.0/),
 
 ### Fixed
 
-- Argon installer not working properly with GitHub Actions
+- Vasc installer not working properly with GitHub Actions
 
 ## [2.0.0-pre1] - 2024-03-18
 
 ### Added
 
-- Brand new Argon CLI, written in Rust
+- Brand new Vasc CLI, written in Rust
 
 [unreleased]: https://github.com/vadymcap/Vasc/compare/2.0.34...HEAD
 [2.0.34]: https://github.com/vadymcap/Vasc/compare/2.0.33...2.0.34
 [2.0.33]: https://github.com/vadymcap/Vasc/compare/2.0.32...2.0.33
 [2.0.32]: https://github.com/vadymcap/Vasc/compare/2.0.27...2.0.32
-[2.0.27]: https://github.com/argon-rbx/argon/compare/2.0.26...2.0.27
-[2.0.26]: https://github.com/argon-rbx/argon/compare/2.0.25...2.0.26
-[2.0.25]: https://github.com/argon-rbx/argon/compare/2.0.24...2.0.25
-[2.0.24]: https://github.com/argon-rbx/argon/compare/2.0.23...2.0.24
-[2.0.23]: https://github.com/argon-rbx/argon/compare/2.0.22...2.0.23
-[2.0.22]: https://github.com/argon-rbx/argon/compare/2.0.21...2.0.22
-[2.0.21]: https://github.com/argon-rbx/argon/compare/2.0.20...2.0.21
-[2.0.20]: https://github.com/argon-rbx/argon/compare/2.0.19...2.0.20
-[2.0.19]: https://github.com/argon-rbx/argon/compare/2.0.18...2.0.19
-[2.0.18]: https://github.com/argon-rbx/argon/compare/2.0.17...2.0.18
-[2.0.17]: https://github.com/argon-rbx/argon/compare/2.0.16...2.0.17
-[2.0.16]: https://github.com/argon-rbx/argon/compare/2.0.15...2.0.16
-[2.0.15]: https://github.com/argon-rbx/argon/compare/2.0.14...2.0.15
-[2.0.14]: https://github.com/argon-rbx/argon/compare/2.0.13...2.0.14
-[2.0.13]: https://github.com/argon-rbx/argon/compare/2.0.12...2.0.13
-[2.0.12]: https://github.com/argon-rbx/argon/compare/2.0.11...2.0.12
-[2.0.11]: https://github.com/argon-rbx/argon/compare/2.0.10...2.0.11
-[2.0.10]: https://github.com/argon-rbx/argon/compare/2.0.9...2.0.10
-[2.0.9]: https://github.com/argon-rbx/argon/compare/2.0.8...2.0.9
-[2.0.8]: https://github.com/argon-rbx/argon/compare/2.0.7...2.0.8
-[2.0.7]: https://github.com/argon-rbx/argon/compare/2.0.6...2.0.7
-[2.0.6]: https://github.com/argon-rbx/argon/compare/2.0.5...2.0.6
-[2.0.5]: https://github.com/argon-rbx/argon/compare/2.0.4...2.0.5
-[2.0.4]: https://github.com/argon-rbx/argon/compare/2.0.3...2.0.4
-[2.0.3]: https://github.com/argon-rbx/argon/compare/2.0.2...2.0.3
-[2.0.2]: https://github.com/argon-rbx/argon/compare/2.0.1...2.0.2
-[2.0.1]: https://github.com/argon-rbx/argon/compare/2.0.0...2.0.1
-[2.0.0]: https://github.com/argon-rbx/argon/compare/2.0.0-pre5...2.0.0
-[2.0.0-pre5]: https://github.com/argon-rbx/argon/compare/2.0.0-pre4...2.0.0-pre5
-[2.0.0-pre4]: https://github.com/argon-rbx/argon/compare/2.0.0-pre3...2.0.0-pre4
-[2.0.0-pre3]: https://github.com/argon-rbx/argon/compare/2.0.0-pre2...2.0.0-pre3
-[2.0.0-pre2]: https://github.com/argon-rbx/argon/compare/2.0.0-pre1...2.0.0-pre2
-[2.0.0-pre1]: https://github.com/argon-rbx/argon/compare/1.3.0...2.0.0-pre1
+[2.0.27]: https://github.com/vasc-rbx/vasc/compare/2.0.26...2.0.27
+[2.0.26]: https://github.com/vasc-rbx/vasc/compare/2.0.25...2.0.26
+[2.0.25]: https://github.com/vasc-rbx/vasc/compare/2.0.24...2.0.25
+[2.0.24]: https://github.com/vasc-rbx/vasc/compare/2.0.23...2.0.24
+[2.0.23]: https://github.com/vasc-rbx/vasc/compare/2.0.22...2.0.23
+[2.0.22]: https://github.com/vasc-rbx/vasc/compare/2.0.21...2.0.22
+[2.0.21]: https://github.com/vasc-rbx/vasc/compare/2.0.20...2.0.21
+[2.0.20]: https://github.com/vasc-rbx/vasc/compare/2.0.19...2.0.20
+[2.0.19]: https://github.com/vasc-rbx/vasc/compare/2.0.18...2.0.19
+[2.0.18]: https://github.com/vasc-rbx/vasc/compare/2.0.17...2.0.18
+[2.0.17]: https://github.com/vasc-rbx/vasc/compare/2.0.16...2.0.17
+[2.0.16]: https://github.com/vasc-rbx/vasc/compare/2.0.15...2.0.16
+[2.0.15]: https://github.com/vasc-rbx/vasc/compare/2.0.14...2.0.15
+[2.0.14]: https://github.com/vasc-rbx/vasc/compare/2.0.13...2.0.14
+[2.0.13]: https://github.com/vasc-rbx/vasc/compare/2.0.12...2.0.13
+[2.0.12]: https://github.com/vasc-rbx/vasc/compare/2.0.11...2.0.12
+[2.0.11]: https://github.com/vasc-rbx/vasc/compare/2.0.10...2.0.11
+[2.0.10]: https://github.com/vasc-rbx/vasc/compare/2.0.9...2.0.10
+[2.0.9]: https://github.com/vasc-rbx/vasc/compare/2.0.8...2.0.9
+[2.0.8]: https://github.com/vasc-rbx/vasc/compare/2.0.7...2.0.8
+[2.0.7]: https://github.com/vasc-rbx/vasc/compare/2.0.6...2.0.7
+[2.0.6]: https://github.com/vasc-rbx/vasc/compare/2.0.5...2.0.6
+[2.0.5]: https://github.com/vasc-rbx/vasc/compare/2.0.4...2.0.5
+[2.0.4]: https://github.com/vasc-rbx/vasc/compare/2.0.3...2.0.4
+[2.0.3]: https://github.com/vasc-rbx/vasc/compare/2.0.2...2.0.3
+[2.0.2]: https://github.com/vasc-rbx/vasc/compare/2.0.1...2.0.2
+[2.0.1]: https://github.com/vasc-rbx/vasc/compare/2.0.0...2.0.1
+[2.0.0]: https://github.com/vasc-rbx/vasc/compare/2.0.0-pre5...2.0.0
+[2.0.0-pre5]: https://github.com/vasc-rbx/vasc/compare/2.0.0-pre4...2.0.0-pre5
+[2.0.0-pre4]: https://github.com/vasc-rbx/vasc/compare/2.0.0-pre3...2.0.0-pre4
+[2.0.0-pre3]: https://github.com/vasc-rbx/vasc/compare/2.0.0-pre2...2.0.0-pre3
+[2.0.0-pre2]: https://github.com/vasc-rbx/vasc/compare/2.0.0-pre1...2.0.0-pre2
+[2.0.0-pre1]: https://github.com/vasc-rbx/vasc/compare/1.3.0...2.0.0-pre1
