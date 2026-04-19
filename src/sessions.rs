@@ -1,7 +1,12 @@
 use anyhow::{Context, Result};
 use log::{debug, trace, warn};
 use serde::{Deserialize, Serialize};
-use std::{collections::HashMap, fs, process, thread};
+use std::{
+	collections::HashMap,
+	fs, process,
+	sync::atomic::{AtomicBool, Ordering},
+	thread,
+};
 
 use crate::util;
 
@@ -29,6 +34,8 @@ struct Sessions {
 	last_session: String,
 	active_sessions: HashMap<String, Session>,
 }
+
+static CTRL_C_HANDLER_INSTALLED: AtomicBool = AtomicBool::new(false);
 
 fn get_sessions() -> Result<Sessions> {
 	let path = util::get_vasc_dir()?.join("sessions.toml");
@@ -70,14 +77,23 @@ pub fn add(id: Option<String>, host: Option<String>, port: Option<u16>, pid: u32
 	set_sessions(&sessions)?;
 
 	if !run_async {
-		ctrlc::set_handler(move || {
-			match remove(&session) {
-				Ok(()) => trace!("Session entry removed"),
-				Err(err) => warn!("Failed to remove session entry: {err}"),
-			}
+		let should_install = CTRL_C_HANDLER_INSTALLED
+			.compare_exchange(false, true, Ordering::SeqCst, Ordering::SeqCst)
+			.is_ok();
 
-			process::exit(0);
-		})?;
+		if should_install {
+			if let Err(err) = ctrlc::set_handler(move || {
+				match remove_all() {
+					Ok(()) => trace!("All session entries removed"),
+					Err(err) => warn!("Failed to remove session entries: {err}"),
+				}
+
+				process::exit(0);
+			}) {
+				CTRL_C_HANDLER_INSTALLED.store(false, Ordering::SeqCst);
+				warn!("Failed to register Ctrl+C handler: {err}");
+			}
+		}
 	}
 
 	// Schedule manual cleanup of old sessions
@@ -101,12 +117,21 @@ pub fn get(id: Option<String>, host: Option<String>, port: Option<u16>) -> Resul
 	}
 
 	for (_, session) in sessions.active_sessions {
-		if session.host == host || session.port == port {
+		if matches_filters(&session, host.as_ref(), port) {
 			return Ok(Some(session));
 		}
 	}
 
 	Ok(None)
+}
+
+fn matches_filters(session: &Session, host: Option<&String>, port: Option<u16>) -> bool {
+	match (host, port) {
+		(Some(host), Some(port)) => session.host.as_ref() == Some(host) && session.port == Some(port),
+		(Some(host), None) => session.host.as_ref() == Some(host),
+		(None, Some(port)) => session.port == Some(port),
+		(None, None) => false,
+	}
 }
 
 pub fn get_multiple(ids: &Vec<String>) -> Result<HashMap<String, Session>> {
@@ -204,5 +229,36 @@ fn generate_id(sessions: &Sessions) -> String {
 		}
 
 		index += 1;
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::{matches_filters, Session};
+
+	#[test]
+	fn matches_host_and_port_strictly() {
+		let session = Session {
+			pid: 123,
+			host: Some("localhost".to_owned()),
+			port: Some(8000),
+		};
+
+		assert!(matches_filters(&session, Some(&"localhost".to_owned()), Some(8000)));
+		assert!(!matches_filters(&session, Some(&"localhost".to_owned()), Some(9000)));
+		assert!(!matches_filters(&session, Some(&"127.0.0.1".to_owned()), Some(8000)));
+	}
+
+	#[test]
+	fn matches_single_filter_when_only_one_is_provided() {
+		let session = Session {
+			pid: 123,
+			host: Some("localhost".to_owned()),
+			port: Some(8000),
+		};
+
+		assert!(matches_filters(&session, Some(&"localhost".to_owned()), None));
+		assert!(matches_filters(&session, None, Some(8000)));
+		assert!(!matches_filters(&session, None, Some(9000)));
 	}
 }

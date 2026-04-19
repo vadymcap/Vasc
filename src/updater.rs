@@ -6,7 +6,10 @@ use serde::{Deserialize, Serialize};
 use std::{
 	env::consts::{ARCH, OS},
 	fs,
+	sync::mpsc,
 	sync::Once,
+	thread,
+	time::Duration,
 	time::SystemTime,
 };
 
@@ -217,6 +220,70 @@ pub fn check_for_updates(plugin: bool, templates: bool, prompt: bool) -> Result<
 	set_status(&status)?;
 
 	Ok(())
+}
+
+pub fn check_for_updates_with_timeout(
+	plugin: bool,
+	templates: bool,
+	prompt: bool,
+	timeout: Duration,
+) -> Result<()> {
+	run_with_timeout(timeout, move || check_for_updates(plugin, templates, prompt), || {
+		warn!(
+			"Update check exceeded timeout ({}s) and was canceled",
+			timeout.as_secs()
+		)
+	})
+}
+
+fn run_with_timeout<F, T>(timeout: Duration, job: F, on_timeout: impl FnOnce()) -> Result<T>
+where
+	F: FnOnce() -> Result<T> + Send + 'static,
+	T: Send + 'static,
+{
+	let (sender, receiver) = mpsc::channel();
+
+	thread::spawn(move || {
+		let _ = sender.send(job());
+	});
+
+	match receiver.recv_timeout(timeout) {
+		Ok(result) => result,
+		Err(mpsc::RecvTimeoutError::Timeout) => {
+			on_timeout();
+			Err(anyhow::anyhow!("Timed out after {}s", timeout.as_secs()))
+		}
+		Err(mpsc::RecvTimeoutError::Disconnected) => {
+			Err(anyhow::anyhow!("Timeout worker stopped unexpectedly"))
+		}
+	}
+}
+
+#[cfg(test)]
+mod tests {
+	use super::run_with_timeout;
+	use std::time::Duration;
+
+	#[test]
+	fn timeout_runner_returns_job_result() {
+		let result = run_with_timeout(Duration::from_millis(50), || Ok::<u32, anyhow::Error>(7), || {});
+
+		assert_eq!(result.unwrap(), 7);
+	}
+
+	#[test]
+	fn timeout_runner_times_out() {
+		let result = run_with_timeout(
+			Duration::from_millis(10),
+			|| {
+				std::thread::sleep(Duration::from_millis(100));
+				Ok::<u32, anyhow::Error>(7)
+			},
+			|| {},
+		);
+
+		assert!(result.is_err());
+	}
 }
 
 pub fn manual_update(cli: bool, plugin: bool, templates: bool, force: bool) -> Result<bool> {

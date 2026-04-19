@@ -35,6 +35,10 @@ macro_rules! filter_warn {
 	};
 }
 
+fn syncback_safe_mode() -> bool {
+	Config::new().syncback_safe_mode
+}
+
 pub fn apply_addition(snapshot: AddedSnapshot, tree: &mut Tree, vfs: &Vfs) -> Result<()> {
 	trace!("Adding {:?} with parent {:?}", snapshot.id, snapshot.parent);
 
@@ -323,10 +327,19 @@ pub fn apply_addition(snapshot: AddedSnapshot, tree: &mut Tree, vfs: &Vfs) -> Re
 				project.save(&path)?;
 			}
 		}
-		SourceKind::None => panic!(
-			"Attempted to add instance whose parent has no source: {:?}",
-			snapshot.id
-		),
+		SourceKind::None => {
+			let message = format!(
+				"Attempted to add instance whose parent has no source: {:?}",
+				snapshot.id
+			);
+
+			if syncback_safe_mode() {
+				warn!("{message}. Skipping due to syncback_safe_mode");
+				return Ok(());
+			}
+
+			return Err(anyhow!(message));
+		}
 	}
 
 	Ok(())
@@ -613,7 +626,16 @@ pub fn apply_update(snapshot: UpdatedSnapshot, tree: &mut Tree, vfs: &Vfs) -> Re
 				unreachable!()
 			}
 		}
-		SourceKind::None => panic!("Attempted to update instance with no source: {:?}", snapshot.id),
+		SourceKind::None => {
+			let message = format!("Attempted to update instance with no source: {:?}", snapshot.id);
+
+			if syncback_safe_mode() {
+				warn!("{message}. Skipping due to syncback_safe_mode");
+				return Ok(());
+			}
+
+			return Err(anyhow!(message));
+		}
 	}
 
 	Ok(())
@@ -659,10 +681,23 @@ pub fn apply_removal(id: Ref, tree: &mut Tree, vfs: &Vfs) -> Result<()> {
 		// Transform parent instance source from folder to file
 		// if it no longer has any children
 
-		let parent = tree
+		let parent = if let Some(parent) = tree
 			.get_instance(id)
 			.and_then(|instance| tree.get_instance(instance.parent()))
-			.expect("Instance has no parent or parent does not have associated meta");
+		{
+			parent
+		} else {
+			let message = format!(
+				"Instance has no parent or parent does not have associated meta: {id:?}"
+			);
+
+			if syncback_safe_mode() {
+				warn!("{message}. Skipping due to syncback_safe_mode");
+				return Ok(());
+			}
+
+			return Err(anyhow!(message));
+		};
 
 		if parent.children().len() != 1 {
 			return Ok(());
@@ -725,7 +760,16 @@ pub fn apply_removal(id: Ref, tree: &mut Tree, vfs: &Vfs) -> Result<()> {
 
 			project.save(path)?;
 		}
-		SourceKind::None => panic!("Attempted to remove instance with no source: {id:?}"),
+		SourceKind::None => {
+			let message = format!("Attempted to remove instance with no source: {id:?}");
+
+			if syncback_safe_mode() {
+				warn!("{message}. Skipping due to syncback_safe_mode");
+				return Ok(());
+			}
+
+			return Err(anyhow!(message));
+		}
 	}
 
 	tree.remove_instance(id);

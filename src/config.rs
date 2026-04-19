@@ -64,6 +64,8 @@ pub struct Config {
 
 	/// Check for new Vasc releases on startup
 	pub check_updates: bool,
+	/// Maximum time in seconds to wait for update checks on startup
+	pub update_timeout_secs: u64,
 	/// Automatically install Vasc updates if available
 	pub auto_update: bool,
 	/// Install Roblox plugin locally and keep it updated
@@ -86,6 +88,8 @@ pub struct Config {
 	pub changes_threshold: usize,
 	/// Maximum number of unsynced changes before showing a warning
 	pub max_unsynced_changes: usize,
+	/// Treat unexpected syncback state errors as warnings instead of panicking
+	pub syncback_safe_mode: bool,
 
 	/// Use .lua file extension instead of .luau when writing scripts
 	pub lua_extension: bool,
@@ -121,6 +125,7 @@ impl Default for Config {
 			build_xml: false,
 
 			check_updates: true,
+			update_timeout_secs: 10,
 			auto_update: false,
 			install_plugin: true,
 			update_templates: true,
@@ -133,6 +138,7 @@ impl Default for Config {
 			move_to_bin: false,
 			changes_threshold: 5,
 			max_unsynced_changes: 10,
+			syncback_safe_mode: true,
 
 			lua_extension: false,
 			ignore_line_endings: true,
@@ -159,7 +165,9 @@ impl Config {
 	}
 
 	pub fn new_mut() -> RwLockWriteGuard<'static, Self> {
-		CONFIG.try_write().expect("Failed to acquire write lock on config")
+		CONFIG
+			.write()
+			.expect("Failed to acquire write lock on config (poisoned lock)")
 	}
 
 	pub fn load() -> Result<ConfigKind> {

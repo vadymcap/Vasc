@@ -77,12 +77,18 @@ impl VfsDebouncer {
 
 						#[cfg(not(target_os = "linux"))]
 						if let Some(event) = debounce(&event) {
-							sender.send(event).unwrap();
+							if sender.send(event).is_err() {
+								trace!("Debouncer receiver was dropped, stopping event thread");
+								return;
+							}
 						}
 
 						#[cfg(target_os = "linux")]
 						if let Some(event) = debounce(&event, &mut context) {
-							sender.send(event).unwrap();
+							if sender.send(event).is_err() {
+								trace!("Debouncer receiver was dropped, stopping event thread");
+								return;
+							}
 						}
 					}
 				}

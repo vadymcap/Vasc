@@ -7,6 +7,7 @@ use std::{
 	mem::ManuallyDrop,
 	process::ExitCode,
 	thread,
+	time::Duration,
 };
 
 use vasc::{vasc_error, cli::Cli, config::Config, crash_handler, installer, logger, stats, updater};
@@ -59,7 +60,12 @@ fn main() -> ExitCode {
 
 	let handle = thread::spawn(move || {
 		if !is_managed && config.check_updates {
-			match updater::check_for_updates(config.install_plugin, config.update_templates, !config.auto_update) {
+			match updater::check_for_updates_with_timeout(
+				config.install_plugin,
+				config.update_templates,
+				!config.auto_update,
+				Duration::from_secs(config.update_timeout_secs),
+			) {
 				Ok(()) => info!("Update check completed successfully!"),
 				Err(err) => warn!("Update check failed: {err}"),
 			}
@@ -99,7 +105,9 @@ fn main() -> ExitCode {
 		}
 	};
 
-	handle.join().ok();
+	if handle.join().is_err() {
+		warn!("Startup worker thread panicked");
+	}
 	stats::save().ok();
 
 	exit_code
