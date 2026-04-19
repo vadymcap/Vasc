@@ -14,11 +14,18 @@ jobs:
 
     outputs:
       upload_url: ${{ steps.create-release.outputs.upload_url }}
+      asset_version: ${{ steps.vars.outputs.asset_version }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
+
+      - name: Resolve Asset Version
+        id: vars
+        shell: bash
+        run: |
+          echo "asset_version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
 
       - name: Read Changelog
         id: read-changes
@@ -106,14 +113,14 @@ jobs:
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
+          name: vasc-${{ needs.draft-release.outputs.asset_version }}-${{ matrix.label }}.zip
           path: release.zip
 
       - name: Upload to Release
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: vasc-${{ github.ref_name }}-${{ matrix.label }}.zip
+          asset_name: vasc-${{ needs.draft-release.outputs.asset_version }}-${{ matrix.label }}.zip
           asset_path: release.zip
 
       - name: Upload Windows Compatibility Asset
@@ -121,5 +128,5 @@ jobs:
         uses: shogo82148/actions-upload-release-asset@v1
         with:
           upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: vasc-${{ github.ref_name }}-win32-x64.zip
+          asset_name: vasc-${{ needs.draft-release.outputs.asset_version }}-win32-x64.zip
           asset_path: release-win32-x64.zip
