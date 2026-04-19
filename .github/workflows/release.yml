@@ -8,48 +8,38 @@ on:
     tags: ["*"]
 
 jobs:
-  draft-release:
-    name: Create Release
+  ensure-release:
+    name: Create or Update Release
     runs-on: ubuntu-latest
-
-    outputs:
-      upload_url: ${{ steps.create-release.outputs.upload_url }}
-      asset_version: ${{ steps.vars.outputs.asset_version }}
 
     steps:
       - uses: actions/checkout@v4
         with:
           ref: ${{ github.ref_name }}
 
-      - name: Resolve Asset Version
-        id: vars
+      - name: Ensure Release Exists
         shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TAG: ${{ github.ref_name }}
         run: |
-          echo "asset_version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
-
-      - name: Read Changelog
-        id: read-changes
-        uses: mindsers/changelog-reader-action@v2
-        with:
-          version: ${{ github.ref_name }}
-
-      - name: Create Release
-        id: create-release
-        uses: shogo82148/actions-create-release@v1
-        with:
-          release_name: ${{ github.ref_name }}
-          body: |
-            ## Changelog
-            ${{ steps.read-changes.outputs.changes }}
-          prerelease: ${{ contains(github.ref_name, 'pre') }}
-          generate_release_notes: true
-          draft: false
-          overwrite: true
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" --draft=false
+            if [[ "$TAG" != *pre* ]]; then
+              gh release edit "$TAG" --latest
+            fi
+          else
+            if [[ "$TAG" == *pre* ]]; then
+              gh release create "$TAG" --prerelease --generate-notes
+            else
+              gh release create "$TAG" --latest --generate-notes
+            fi
+          fi
 
   build:
     name: Build (${{ matrix.label }})
     runs-on: ${{ matrix.os }}
-    needs: draft-release
+    needs: ensure-release
 
     strategy:
       fail-fast: false
@@ -82,6 +72,12 @@ jobs:
         with:
           ref: ${{ github.ref_name }}
 
+      - name: Resolve Asset Version
+        id: vars
+        shell: bash
+        run: |
+          echo "asset_version=${GITHUB_REF_NAME#v}" >> "$GITHUB_OUTPUT"
+
       - name: Setup Rust
         uses: hecrj/setup-rust-action@v2
         with:
@@ -99,7 +95,7 @@ jobs:
           mkdir release
           cp "target/${{ matrix.target }}/release/vasc" release/
           cd release
-          zip ../release.zip *
+          zip ../vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip *
 
       - name: Archive (Windows)
         if: ${{ matrix.host == 'windows' }}
@@ -107,26 +103,24 @@ jobs:
         run: |
           New-Item -ItemType Directory -Path release -Force | Out-Null
           Copy-Item "target/${{ matrix.target }}/release/vasc.exe" "release/vasc.exe"
-          Compress-Archive -Path "release/vasc.exe" -DestinationPath "release.zip" -Force
-          Copy-Item "release.zip" "release-win32-x64.zip" -Force
+          Compress-Archive -Path "release/vasc.exe" -DestinationPath "vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip" -Force
+          Copy-Item "vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip" "vasc-${{ steps.vars.outputs.asset_version }}-win32-x64.zip" -Force
 
       - name: Upload to Artifacts
         uses: actions/upload-artifact@v4
         with:
-          name: vasc-${{ needs.draft-release.outputs.asset_version }}-${{ matrix.label }}.zip
-          path: release.zip
+          name: vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip
+          path: vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip
 
       - name: Upload to Release
-        uses: shogo82148/actions-upload-release-asset@v1
-        with:
-          upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: vasc-${{ needs.draft-release.outputs.asset_version }}-${{ matrix.label }}.zip
-          asset_path: release.zip
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" "vasc-${{ steps.vars.outputs.asset_version }}-${{ matrix.label }}.zip" --clobber
 
       - name: Upload Windows Compatibility Asset
         if: ${{ matrix.host == 'windows' }}
-        uses: shogo82148/actions-upload-release-asset@v1
-        with:
-          upload_url: ${{ needs.draft-release.outputs.upload_url }}
-          asset_name: vasc-${{ needs.draft-release.outputs.asset_version }}-win32-x64.zip
-          asset_path: release-win32-x64.zip
+        shell: pwsh
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh release upload "${{ github.ref_name }}" "vasc-${{ steps.vars.outputs.asset_version }}-win32-x64.zip" --clobber
