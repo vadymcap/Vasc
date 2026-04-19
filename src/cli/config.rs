@@ -5,10 +5,9 @@ use open;
 use std::{env, fs::File, path::PathBuf};
 
 use crate::{
-	vasc_info,
 	config::{Config as VascConfig, ConfigKind},
 	ext::PathExt,
-	logger, util,
+	logger, util, vasc_info,
 };
 
 /// Edit global or workspace config with editor or CLI

@@ -222,18 +222,17 @@ pub fn check_for_updates(plugin: bool, templates: bool, prompt: bool) -> Result<
 	Ok(())
 }
 
-pub fn check_for_updates_with_timeout(
-	plugin: bool,
-	templates: bool,
-	prompt: bool,
-	timeout: Duration,
-) -> Result<()> {
-	run_with_timeout(timeout, move || check_for_updates(plugin, templates, prompt), || {
-		warn!(
-			"Update check exceeded timeout ({}s) and was canceled",
-			timeout.as_secs()
-		)
-	})
+pub fn check_for_updates_with_timeout(plugin: bool, templates: bool, prompt: bool, timeout: Duration) -> Result<()> {
+	run_with_timeout(
+		timeout,
+		move || check_for_updates(plugin, templates, prompt),
+		|| {
+			warn!(
+				"Update check exceeded timeout ({}s) and was canceled",
+				timeout.as_secs()
+			)
+		},
+	)
 }
 
 fn run_with_timeout<F, T>(timeout: Duration, job: F, on_timeout: impl FnOnce()) -> Result<T>

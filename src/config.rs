@@ -15,7 +15,7 @@ use std::{
 };
 use toml;
 
-use crate::{vasc_error, logger::Table, util};
+use crate::{logger::Table, util, vasc_error};
 
 lazy_static! {
 	static ref CONFIG: RwLock<Config> = RwLock::new(Config::default());

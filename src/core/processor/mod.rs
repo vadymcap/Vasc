@@ -10,12 +10,11 @@ use std::{
 
 use super::{changes::Changes, queue::Queue, tree::Tree};
 use crate::{
-	vasc_error,
 	config::Config,
 	constants::BLACKLISTED_PATHS,
 	lock, logger,
 	project::{Project, ProjectDetails},
-	server, stats,
+	server, stats, vasc_error,
 	vfs::{Vfs, VfsEvent},
 };
 

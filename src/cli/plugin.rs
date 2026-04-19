@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::{Parser, ValueEnum};
 use std::{fs, path::PathBuf};
 
-use crate::{vasc_info, config::Config, ext::PathExt, installer, util};
+use crate::{config::Config, ext::PathExt, installer, util, vasc_info};
 
 /// Install Vasc Roblox Studio plugin locally
 #[derive(Parser)]

@@ -4,11 +4,11 @@ use std::path::{Path, PathBuf};
 use uuid::Uuid;
 
 use crate::{
-	vasc_error, vasc_warn,
 	config::Config,
 	core::meta::{Meta, SyncbackFilter},
 	ext::PathExt,
 	resolution::UnresolvedValue,
+	vasc_error, vasc_warn,
 	vfs::Vfs,
 	Properties,
 };

@@ -7,7 +7,6 @@ use std::path::Path;
 
 use super::new_snapshot;
 use crate::{
-	vasc_warn,
 	core::{
 		meta::{Context, Meta, NodePath, Source},
 		snapshot::Snapshot,
@@ -15,7 +14,7 @@ use crate::{
 	ext::PathExt,
 	middleware::helpers,
 	project::{Project, ProjectNode, ProjectPath},
-	util,
+	util, vasc_warn,
 	vfs::Vfs,
 };
 

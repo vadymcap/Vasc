@@ -687,9 +687,7 @@ pub fn apply_removal(id: Ref, tree: &mut Tree, vfs: &Vfs) -> Result<()> {
 		{
 			parent
 		} else {
-			let message = format!(
-				"Instance has no parent or parent does not have associated meta: {id:?}"
-			);
+			let message = format!("Instance has no parent or parent does not have associated meta: {id:?}");
 
 			if syncback_safe_mode() {
 				warn!("{message}. Skipping due to syncback_safe_mode");

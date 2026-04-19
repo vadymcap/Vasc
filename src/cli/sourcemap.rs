@@ -5,13 +5,12 @@ use log::info;
 use std::{path::PathBuf, process};
 
 use crate::{
-	vasc_info,
 	config::Config,
 	core::Core,
 	ext::PathExt,
 	program::{Program, ProgramName},
 	project::{self, Project},
-	sessions,
+	sessions, vasc_info,
 };
 
 /// Generate JSON sourcemap of the project

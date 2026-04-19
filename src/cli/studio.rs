@@ -2,7 +2,7 @@ use anyhow::Result;
 use clap::Parser;
 use std::path::PathBuf;
 
-use crate::{vasc_info, config::Config, ext::PathExt, studio};
+use crate::{config::Config, ext::PathExt, studio, vasc_info};
 
 /// Launch a new Roblox Studio instance
 #[derive(Parser)]

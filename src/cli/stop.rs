@@ -3,7 +3,7 @@ use clap::Parser;
 use colored::Colorize;
 use reqwest::blocking::Client;
 
-use crate::{vasc_info, vasc_warn, logger::Table, sessions, util};
+use crate::{logger::Table, sessions, util, vasc_info, vasc_warn};
 
 /// Stop Vasc session by address, ID or all running sessions
 #[derive(Parser)]

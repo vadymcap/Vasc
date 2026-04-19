@@ -5,7 +5,6 @@ use log::{debug, info};
 use std::{path::PathBuf, process, sync::Arc, thread};
 
 use crate::{
-	vasc_error, vasc_info, vasc_warn,
 	config::Config,
 	core::Core,
 	ext::PathExt,
@@ -13,7 +12,7 @@ use crate::{
 	program::{Program, ProgramName},
 	project::{self, Project},
 	server::{self, Server},
-	sessions,
+	sessions, vasc_error, vasc_info, vasc_warn,
 };
 
 /// Start local server and listen for file changes

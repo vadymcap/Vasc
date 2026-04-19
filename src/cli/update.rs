@@ -1,7 +1,7 @@
 use anyhow::Result;
 use clap::{Parser, ValueEnum};
 
-use crate::{vasc_error, vasc_info, config::Config, updater};
+use crate::{config::Config, updater, vasc_error, vasc_info};
 
 /// Forcefully update Vasc components if available
 #[derive(Parser)]

@@ -4,10 +4,9 @@ use colored::Colorize;
 use std::path::PathBuf;
 
 use crate::{
-	vasc_error, vasc_info,
 	config::Config,
 	ext::PathExt,
-	logger, project, stats,
+	logger, project, stats, vasc_error, vasc_info,
 	workspace::{self, WorkspaceConfig, WorkspaceLicense},
 };
 

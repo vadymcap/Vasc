@@ -6,14 +6,13 @@ use roblox_install::RobloxStudio;
 use std::{fs, path::PathBuf, process};
 
 use crate::{
-	vasc_info,
 	config::Config,
 	core::Core,
 	ext::PathExt,
 	integration,
 	program::{Program, ProgramName},
 	project::{self, Project},
-	sessions,
+	sessions, vasc_info,
 };
 
 /// Build project into Roblox binary or XML place or model

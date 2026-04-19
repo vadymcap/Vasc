@@ -13,13 +13,13 @@ use std::{
 
 use self::data::DataSnapshot;
 use crate::{
-	vasc_warn,
 	constants::BLACKLISTED_PATHS,
 	core::{
 		meta::{Context, Source},
 		snapshot::Snapshot,
 	},
 	ext::{PathExt, ResultExt},
+	vasc_warn,
 	vfs::Vfs,
 	Properties,
 };
