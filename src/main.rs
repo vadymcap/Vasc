@@ -10,7 +10,7 @@ use std::{
 	time::Duration,
 };
 
-use vasc::{vasc_error, cli::Cli, config::Config, crash_handler, installer, logger, stats, updater};
+use vasc::{cli::Cli, config::Config, crash_handler, installer, logger, stats, updater, vasc_error};
 
 const PROFILER_ADDRESS: &str = "localhost:8888";
 

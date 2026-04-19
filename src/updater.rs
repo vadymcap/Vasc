@@ -253,9 +253,7 @@ where
 			on_timeout();
 			Err(anyhow::anyhow!("Timed out after {}s", timeout.as_secs()))
 		}
-		Err(mpsc::RecvTimeoutError::Disconnected) => {
-			Err(anyhow::anyhow!("Timeout worker stopped unexpectedly"))
-		}
+		Err(mpsc::RecvTimeoutError::Disconnected) => Err(anyhow::anyhow!("Timeout worker stopped unexpectedly")),
 	}
 }
 
