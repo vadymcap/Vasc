@@ -25,21 +25,6 @@ macro_rules! vasc_info {
 	($($arg:tt)+) => (log::log!(target: "vasc_log", log::Level::Info, $($arg)+))
 }
 
-#[macro_export]
-macro_rules! vasc_error {
-	($($arg:tt)+) => ($crate::vasc_error!($($arg)+))
-}
-
-#[macro_export]
-macro_rules! vasc_warn {
-	($($arg:tt)+) => ($crate::vasc_warn!($($arg)+))
-}
-
-#[macro_export]
-macro_rules! vasc_info {
-	($($arg:tt)+) => ($crate::vasc_info!($($arg)+))
-}
-
 pub fn init(verbosity: LevelFilter, log_style: WriteStyle) {
 	let mut builder = Builder::new();
 

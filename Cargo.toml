@@ -1,5 +1,5 @@
 [package]
-name = "vasc-rbx"
+name = "vasc"
 authors = ["Vaist"]
 description = "Full featured tool for Roblox development"
 repository = "https://github.com/vadymcap/Vasc"

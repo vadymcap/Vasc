@@ -3812,7 +3812,7 @@ dependencies = [
 ]
 
 [[package]]
-name = "vasc-rbx"
+name = "vasc"
 version = "2.0.32"
 dependencies = [
  "actix-msgpack",
