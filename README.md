@@ -13,7 +13,7 @@
 
 # VASC
 
-VASC is a powerful CLI tool that elevates the Roblox development experience. It is a fork of [Vasc](https://github.com/vasc-rbx/vasc), extended with additional features and improvements.
+VASC is a powerful CLI tool that elevates the Roblox development experience. It is a fork of [Argon](https://github.com/argon-rbx/argon), extended with additional features and improvements.
 
 This repository is the core of the VASC project — all processing happens here. It works alongside two companion packages:
 
